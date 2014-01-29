@@ -1,0 +1,57 @@
+<#include "manageavatarserver_tabs.html" />
+<@tabs tab="avatar" />
+
+<div class="row-fluid" >
+    <div class="span12">
+
+        <@messages infos=infos />
+
+        <form method="post"  action="jsp/admin/plugins/avatarserver/ManageAvatars.jsp">
+            <button name="view_createAvatar" class="btn btn-primary pull-right" type="submit">
+                <i class="icon-plus icon-white"></i>
+                #i18n{avatarserver.manage_avatars.buttonAdd}
+            </button>
+        </form>
+
+        <h4>#i18n{avatarserver.manage_avatars.tableLabel}</h4>    
+
+        <@paginationAdmin paginator=paginator combo=1 />
+
+        <table class="table table-condensed table-striped">
+            <tr>
+            <input type="hidden" id="id_avatar" name="id_avatar"  />
+            <th>#i18n{avatarserver.manage_avatars.columnEmail}</th>
+            <th>#i18n{avatarserver.manage_avatars.columnAvatarImage}</th>
+            <th>#i18n{portal.util.labelActions}</th>
+            </tr>
+            <#list avatar_list as avatar >
+            <tr>
+            <input type="hidden" id="id_avatar" name="id_avatar"  />
+            <td>
+                ${avatar.email}
+            </td>
+            <td>
+                <img src="image?resource_type=avatar_img&id=${avatar.id}" width="50" height="50" />
+               
+            </td>
+            <td>
+                <a href="jsp/admin/plugins/avatarserver/ManageAvatars.jsp?view=modifyAvatar&id_avatar=${avatar.id}"
+                   class="btn btn-primary btn-small" title="#i18n{portal.util.labelModify}">
+                    <i class="icon-edit icon-white"></i>
+                </a>
+
+                <a href="jsp/admin/plugins/avatarserver/ManageAvatars.jsp?action=confirmRemoveAvatar&id_avatar=${avatar.id}"
+                   class="btn btn-danger btn-small" title="#i18n{portal.util.labelDelete}" >
+                    <i class="icon-trash icon-white"></i>
+                </a>
+            </td>
+            </tr>
+            </#list>
+        </table>
+
+        <@paginationAdmin paginator=paginator />
+
+    </div>
+</div>
+
+

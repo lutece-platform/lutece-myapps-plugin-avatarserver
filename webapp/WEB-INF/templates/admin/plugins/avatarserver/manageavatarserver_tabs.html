@@ -1,0 +1,11 @@
+<#macro tabs tab >
+<div>
+    <ul class="nav nav-tabs">
+        <li <#if tab="avatar">class="active"</#if>>
+            <a href="jsp/admin/plugins/avatarserver/ManageAvatars.jsp">
+                #i18n{avatarserver.manage_avatars.pageTitle}
+            </a>
+        </li>
+    </ul>
+</div>
+</#macro>

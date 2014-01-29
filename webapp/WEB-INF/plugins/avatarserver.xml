@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<plug-in>
+    <name>avatarserver</name>
+    <class>fr.paris.lutece.plugins.avatarserver.service.AvatarServerPlugin</class>
+    <version>1.0.0</version>
+    <documentation></documentation>
+    <installation></installation>
+    <changes></changes>
+    <user-guide></user-guide>
+    <description>avatarserver.plugin.description</description>
+    <provider>avatarserver.plugin.provider</provider>
+    <provider-url>http://fr.lutece.paris.fr</provider-url>
+    <icon-url>images/admin/skin/feature_default_icon.png</icon-url>
+    <copyright>Copyright (c) 2014 Mairie de Paris</copyright>
+    <db-pool-required>1</db-pool-required>
+    
+    <!-- Admin features parameters -->
+    <admin-features>
+        <admin-feature>
+            <feature-id>AVATARSERVER_MANAGEMENT</feature-id>
+            <feature-title>avatarserver.adminFeature.ManageAvatarserver.name</feature-title>
+            <feature-description>avatarserver.adminFeature.ManageAvatarserver.description</feature-description>
+            <feature-level>0</feature-level>
+            <feature-url>jsp/admin/plugins/avatarserver/ManageAvatars.jsp</feature-url>
+            <feature-icon-url></feature-icon-url>
+      </admin-feature>
+    </admin-features>    
+  	<!-- XPages parameters -->
+    <applications>
+    </applications>
+	<!-- Portlet parameters -->
+    <portlets>
+   </portlets>
+</plug-in>
