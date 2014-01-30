@@ -35,7 +35,6 @@ package fr.paris.lutece.plugins.avatarserver.service;
 
 import fr.paris.lutece.plugins.avatarserver.business.Avatar;
 import fr.paris.lutece.plugins.avatarserver.business.AvatarHome;
-import fr.paris.lutece.plugins.avatarserver.business.Avatar;
 import fr.paris.lutece.portal.service.image.ImageResource;
 import fr.paris.lutece.portal.service.image.ImageResourceManager;
 import fr.paris.lutece.portal.service.image.ImageResourceProvider;
@@ -89,7 +88,7 @@ public class AvatarResourceProvider implements ImageResourceProvider
     public ImageResource getImageResource( int nIdResource )
     {
         Plugin plugin = PluginService.getPlugin( PLUGIN_NAME );
-        Avatar avatar = AvatarHome.findByPrimaryKey( nIdResource);
+        Avatar avatar = AvatarHome.findByPrimaryKey( nIdResource );
 
         if ( avatar != null )
         {

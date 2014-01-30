@@ -7,15 +7,15 @@
  * are met:
  *
  *  1. Redistributions of source code must retain the above copyright notice
- *	 and the following disclaimer.
+ *         and the following disclaimer.
  *
  *  2. Redistributions in binary form must reproduce the above copyright notice
- *	 and the following disclaimer in the documentation and/or other materials
- *	 provided with the distribution.
+ *         and the following disclaimer in the documentation and/or other materials
+ *         provided with the distribution.
  *
  *  3. Neither the name of 'Mairie de Paris' nor 'Lutece' nor the names of its
- *	 contributors may be used to endorse or promote products derived from
- *	 this software without specific prior written permission.
+ *         contributors may be used to endorse or promote products derived from
+ *         this software without specific prior written permission.
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
@@ -38,19 +38,20 @@ import fr.paris.lutece.util.sql.DAOUtil;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
+
 
 /**
  * This class provides Data Access methods for Avatar objects
  */
-public final class AvatarDAO implements IAvatarDAO {
-
+public final class AvatarDAO implements IAvatarDAO
+{
     // Constants
     private static final String SQL_QUERY_NEW_PK = "SELECT max( id_avatar ) FROM avatarserver_avatar";
-    private static final String SQL_QUERY_SELECT = "SELECT id_avatar, email, mime_type, file_value FROM avatarserver_avatar WHERE id_avatar = ?";
-    private static final String SQL_QUERY_INSERT = "INSERT INTO avatarserver_avatar ( id_avatar, email,mime_type,file_value ) VALUES ( ?, ?, ?, ? ) ";
+    private static final String SQL_QUERY_SELECT = "SELECT id_avatar, email, mime_type, file_value, hash_email FROM avatarserver_avatar WHERE id_avatar = ?";
+    private static final String SQL_QUERY_SELECT_BY_HASH = "SELECT id_avatar, email, mime_type, file_value, hash_email FROM avatarserver_avatar WHERE hash_email = ?";
+    private static final String SQL_QUERY_INSERT = "INSERT INTO avatarserver_avatar ( id_avatar, email,mime_type,file_value, hash_email ) VALUES ( ?, ?, ?, ?, ? ) ";
     private static final String SQL_QUERY_DELETE = "DELETE FROM avatarserver_avatar WHERE id_avatar = ? ";
-    private static final String SQL_QUERY_UPDATE = "UPDATE avatarserver_avatar SET id_avatar = ?, email = ?, mime_type = ?, file_value = ?,  WHERE id_avatar = ?";
+    private static final String SQL_QUERY_UPDATE = "UPDATE avatarserver_avatar SET id_avatar = ?, email = ?, mime_type = ?, file_value = ?, hash_email = ?  WHERE id_avatar = ?";
     private static final String SQL_QUERY_SELECTALL = "SELECT * FROM avatarserver_avatar";
 
     /**
@@ -59,17 +60,19 @@ public final class AvatarDAO implements IAvatarDAO {
      * @param plugin The Plugin
      * @return The new primary key
      */
-    public int newPrimaryKey(Plugin plugin) {
-        DAOUtil daoUtil = new DAOUtil(SQL_QUERY_NEW_PK, plugin);
-        daoUtil.executeQuery();
+    public int newPrimaryKey( Plugin plugin )
+    {
+        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_NEW_PK, plugin );
+        daoUtil.executeQuery(  );
 
         int nKey = 1;
 
-        if (daoUtil.next()) {
-            nKey = daoUtil.getInt(1) + 1;
+        if ( daoUtil.next(  ) )
+        {
+            nKey = daoUtil.getInt( 1 ) + 1;
         }
 
-        daoUtil.free();
+        daoUtil.free(  );
 
         return nKey;
     }
@@ -78,41 +81,44 @@ public final class AvatarDAO implements IAvatarDAO {
      * {@inheritDoc }
      */
     @Override
-    public void insert(Avatar avatar, Plugin plugin) {
-        DAOUtil daoUtil = new DAOUtil(SQL_QUERY_INSERT, plugin);
+    public void insert( Avatar avatar, Plugin plugin )
+    {
+        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_INSERT, plugin );
         int nPos = 2;
-        avatar.setId(newPrimaryKey(plugin));
-        daoUtil.setInt(1, avatar.getId());
-        daoUtil.setString(2, avatar.getEmail());
-        daoUtil.setString(3, avatar.getMimeType());
-        daoUtil.setBytes(4, avatar.getValue());
-        daoUtil.executeUpdate();
-        daoUtil.free();
+        avatar.setId( newPrimaryKey( plugin ) );
+        daoUtil.setInt( 1, avatar.getId(  ) );
+        daoUtil.setString( 2, avatar.getEmail(  ) );
+        daoUtil.setString( 3, avatar.getMimeType(  ) );
+        daoUtil.setBytes( 4, avatar.getValue(  ) );
+        daoUtil.setString( 5, avatar.getHash(  ) );
+        daoUtil.executeUpdate(  );
+        daoUtil.free(  );
     }
 
     /**
      * {@inheritDoc }
      */
     @Override
-    public Avatar load(int nKey, Plugin plugin) {
-        DAOUtil daoUtil = new DAOUtil(SQL_QUERY_SELECT, plugin);
-        daoUtil.setInt(1, nKey);
-        daoUtil.executeQuery();
+    public Avatar load( int nKey, Plugin plugin )
+    {
+        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT, plugin );
+        daoUtil.setInt( 1, nKey );
+        daoUtil.executeQuery(  );
 
         Avatar avatar = null;
 
-        if (daoUtil.next()) {
-            avatar = new Avatar();
-            avatar.setId(daoUtil.getInt(1));
-            avatar.setEmail(daoUtil.getString(2)); 
-            avatar.setMimeType(daoUtil.getString(3));
-            avatar.setValue(daoUtil.getBytes(4));
-            
-            
-
+        if ( daoUtil.next(  ) )
+        {
+            avatar = new Avatar(  );
+            avatar.setId( daoUtil.getInt( 1 ) );
+            avatar.setEmail( daoUtil.getString( 2 ) );
+            avatar.setMimeType( daoUtil.getString( 3 ) );
+            avatar.setValue( daoUtil.getBytes( 4 ) );
+            avatar.setHash( daoUtil.getString( 5 ) );
         }
 
-        daoUtil.free();
+        daoUtil.free(  );
+
         return avatar;
     }
 
@@ -120,53 +126,87 @@ public final class AvatarDAO implements IAvatarDAO {
      * {@inheritDoc }
      */
     @Override
-    public void delete(int nAvatarId, Plugin plugin) {
-        DAOUtil daoUtil = new DAOUtil(SQL_QUERY_DELETE, plugin);
-        daoUtil.setInt(1, nAvatarId);
-        daoUtil.executeUpdate();
-        daoUtil.free();
+    public void delete( int nAvatarId, Plugin plugin )
+    {
+        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DELETE, plugin );
+        daoUtil.setInt( 1, nAvatarId );
+        daoUtil.executeUpdate(  );
+        daoUtil.free(  );
     }
 
     /**
      * {@inheritDoc }
      */
     @Override
-    public void store(Avatar avatar, Plugin plugin) {
-        DAOUtil daoUtil = new DAOUtil(SQL_QUERY_UPDATE, plugin);
+    public void store( Avatar avatar, Plugin plugin )
+    {
+        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_UPDATE, plugin );
         int nPos = 2;
-        daoUtil.setInt(1, avatar.getId());
-        daoUtil.setString(2, avatar.getEmail());
-        daoUtil.setString(3, avatar.getMimeType());
-        daoUtil.setBytes(4, avatar.getValue());
-        daoUtil.executeUpdate();
-        daoUtil.free();
+        daoUtil.setInt( 1, avatar.getId(  ) );
+        daoUtil.setString( 2, avatar.getEmail(  ) );
+        daoUtil.setString( 3, avatar.getMimeType(  ) );
+        daoUtil.setBytes( 4, avatar.getValue(  ) );
+        daoUtil.setString( 5, avatar.getHash(  ) );
+        daoUtil.executeUpdate(  );
+        daoUtil.free(  );
     }
 
     /**
      * {@inheritDoc }
      */
     @Override
-    public Collection<Avatar> selectAvatarsList(Plugin plugin) {
-        Collection<Avatar> avatarList = new ArrayList<Avatar>();
-        DAOUtil daoUtil = new DAOUtil(SQL_QUERY_SELECTALL, plugin);
-        daoUtil.executeQuery();
+    public Collection<Avatar> selectAvatarsList( Plugin plugin )
+    {
+        Collection<Avatar> avatarList = new ArrayList<Avatar>(  );
+        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECTALL, plugin );
+        daoUtil.executeQuery(  );
+
         int nPos;
-        while (daoUtil.next()) {
+
+        while ( daoUtil.next(  ) )
+        {
             nPos = 2;
-            Avatar avatar = new Avatar();
 
-            avatar.setId(daoUtil.getInt(1));
-            avatar.setEmail(daoUtil.getString(2));
-            avatar.setMimeType(daoUtil.getString(3));
-            avatar.setValue(daoUtil.getBytes(4));
-            
-            
+            Avatar avatar = new Avatar(  );
 
-            avatarList.add(avatar);
+            avatar.setId( daoUtil.getInt( 1 ) );
+            avatar.setEmail( daoUtil.getString( 2 ) );
+            avatar.setMimeType( daoUtil.getString( 3 ) );
+            avatar.setValue( daoUtil.getBytes( 4 ) );
+            avatar.setHash( daoUtil.getString( 5 ) );
+
+            avatarList.add( avatar );
         }
 
-        daoUtil.free();
+        daoUtil.free(  );
+
         return avatarList;
     }
 
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public Avatar selectByHash( String strHash, Plugin plugin )
+    {
+        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT_BY_HASH, plugin );
+        daoUtil.setString( 1, strHash );
+        daoUtil.executeQuery(  );
+
+        Avatar avatar = null;
+
+        if ( daoUtil.next(  ) )
+        {
+            avatar = new Avatar(  );
+            avatar.setId( daoUtil.getInt( 1 ) );
+            avatar.setEmail( daoUtil.getString( 2 ) );
+            avatar.setMimeType( daoUtil.getString( 3 ) );
+            avatar.setValue( daoUtil.getBytes( 4 ) );
+            avatar.setHash( daoUtil.getString( 5 ) );
+        }
+
+        daoUtil.free(  );
+
+        return avatar;
+    }
 }

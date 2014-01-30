@@ -31,24 +31,46 @@
  *
  * License 1.0
  */
-package fr.paris.lutece.plugins.avatarserver.web;
+package fr.paris.lutece.plugins.avatarserver.service;
 
-import fr.paris.lutece.portal.util.mvc.admin.MVCAdminJspBean;
+import fr.paris.lutece.portal.service.util.AppLogService;
+import fr.paris.lutece.portal.service.util.AppPropertiesService;
+import fr.paris.lutece.util.url.UrlItem;
+
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 
 
 /**
- * ManageAvatarserver JSP Bean abstract class for JSP Bean
+ * Hash Service
+ *
  */
-public abstract class ManageAvatarserverJspBean extends MVCAdminJspBean
+public class HashService
 {
-    // Right
-    public static final String RIGHT_MANAGEAVATARSERVER = "AVATARSERVER_MANAGEMENT";
-    protected static final String PARAMETER_PAGE_INDEX = "page_index";
-    protected static final String MARK_PAGINATOR = "paginator";
-    protected static final String MARK_NB_ITEMS_PER_PAGE = "nb_items_per_page";
+    public static String getHash( String strAvatarEmail )
+    {
+        String strEmail = strAvatarEmail.toLowerCase(  );
+        MessageDigest md;
 
-    //Variables
-    protected int _nDefaultItemsPerPage;
-    protected String _strCurrentPageIndex;
-    protected int _nItemsPerPage;
+        try
+        {
+            md = MessageDigest.getInstance( "MD5" );
+
+            byte[] hash = md.digest( strEmail.getBytes(  ) );
+            StringBuilder sb = new StringBuilder(  );
+
+            for ( int i = 0; i < hash.length; i++ )
+            {
+                sb.append( Integer.toString( ( hash[i] & 0xff ) + 0x100, 16 ).substring( 1 ) );
+            }
+
+            return sb.toString(  );
+        }
+        catch ( NoSuchAlgorithmException ex )
+        {
+            AppLogService.error( "Error getting gravatar : " + ex.getMessage(  ), ex );
+        }
+
+        return "";
+    }
 }

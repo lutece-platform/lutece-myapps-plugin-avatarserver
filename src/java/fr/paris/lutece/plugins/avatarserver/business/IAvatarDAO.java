@@ -1,4 +1,3 @@
-
 /*
  * Copyright (c) 2002-2013, Mairie de Paris
  * All rights reserved.
@@ -8,15 +7,15 @@
  * are met:
  *
  *  1. Redistributions of source code must retain the above copyright notice
- *	 and the following disclaimer.
+ *         and the following disclaimer.
  *
  *  2. Redistributions in binary form must reproduce the above copyright notice
- *	 and the following disclaimer in the documentation and/or other materials
- *	 provided with the distribution.
+ *         and the following disclaimer in the documentation and/or other materials
+ *         provided with the distribution.
  *
  *  3. Neither the name of 'Mairie de Paris' nor 'Lutece' nor the names of its
- *	 contributors may be used to endorse or promote products derived from
- *	 this software without specific prior written permission.
+ *         contributors may be used to endorse or promote products derived from
+ *         this software without specific prior written permission.
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
@@ -32,12 +31,11 @@
  *
  * License 1.0
  */
- 
 package fr.paris.lutece.plugins.avatarserver.business;
 
 import fr.paris.lutece.portal.service.plugin.Plugin;
-import java.util.Collection;
 
+import java.util.Collection;
 
 
 /**
@@ -45,51 +43,50 @@ import java.util.Collection;
  */
 public interface IAvatarDAO
 {
+    /**
+     * Insert a new record in the table.
+     * @param avatar instance of the Avatar object to insert
+     * @param plugin the Plugin
+     */
+    void insert( Avatar avatar, Plugin plugin );
 
+    /**
+     * Update the record in the table
+     * @param avatar the reference of the Avatar
+     * @param plugin the Plugin
+     */
+    void store( Avatar avatar, Plugin plugin );
 
-	/**
-	 * Insert a new record in the table.
-	 * @param avatar instance of the Avatar object to insert
-	 * @param plugin the Plugin
-	 */
-	void insert( Avatar avatar, Plugin plugin );
+    /**
+     * Delete a record from the table
+     * @param nIdAvatar int identifier of the Avatar to delete
+     * @param plugin the Plugin
+     */
+    void delete( int nIdAvatar, Plugin plugin );
 
+    ///////////////////////////////////////////////////////////////////////////
+    // Finders
 
+    /**
+     * Load the data from the table
+     * @param nKey The identifier of the avatar
+     * @param plugin the Plugin
+     * @return The instance of the avatar
+     */
+    Avatar load( int nKey, Plugin plugin );
 
-	/**
-	 * Update the record in the table
-	 * @param avatar the reference of the Avatar
-	 * @param plugin the Plugin
-	 */
-	void store( Avatar avatar, Plugin plugin );
+    /**
+     * Load the data of all the avatar objects and returns them as a collection
+     * @param plugin the Plugin
+     * @return The collection which contains the data of all the avatar objects
+     */
+    Collection<Avatar> selectAvatarsList( Plugin plugin );
 
-
-	/**
-	 * Delete a record from the table
-	 * @param nIdAvatar int identifier of the Avatar to delete
-	 * @param plugin the Plugin
-	 */
-	void delete( int nIdAvatar, Plugin plugin );
-
-	///////////////////////////////////////////////////////////////////////////
-	// Finders
-
-	/**
-	 * Load the data from the table
-	 * @param nKey The identifier of the avatar
-	 * @param plugin the Plugin
-	 * @return The instance of the avatar
-	 */
-	Avatar load( int nKey, Plugin plugin );
-
-
-
-	/**
-	 * Load the data of all the avatar objects and returns them as a collection
-	 * @param plugin the Plugin
-	 * @return The collection which contains the data of all the avatar objects
-	 */
-	Collection<Avatar> selectAvatarsList( Plugin plugin );
-	
+    /**
+     * Find avatar by its hash
+     * @param strHash The hash
+     * @param _plugin The plugin
+     * @return The avatar
+     */
+    Avatar selectByHash( String strHash, Plugin _plugin );
 }
-

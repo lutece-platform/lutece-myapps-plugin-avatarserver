@@ -7,15 +7,15 @@
  * are met:
  *
  *  1. Redistributions of source code must retain the above copyright notice
- *	 and the following disclaimer.
+ *         and the following disclaimer.
  *
  *  2. Redistributions in binary form must reproduce the above copyright notice
- *	 and the following disclaimer in the documentation and/or other materials
- *	 provided with the distribution.
+ *         and the following disclaimer in the documentation and/or other materials
+ *         provided with the distribution.
  *
  *  3. Neither the name of 'Mairie de Paris' nor 'Lutece' nor the names of its
- *	 contributors may be used to endorse or promote products derived from
- *	 this software without specific prior written permission.
+ *         contributors may be used to endorse or promote products derived from
+ *         this software without specific prior written permission.
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
@@ -31,90 +31,91 @@
  *
  * License 1.0
  */
- 
 package fr.paris.lutece.plugins.avatarserver.business;
 
+import fr.paris.lutece.plugins.avatarserver.service.HashService;
 import fr.paris.lutece.portal.service.plugin.Plugin;
 import fr.paris.lutece.portal.service.plugin.PluginService;
 import fr.paris.lutece.portal.service.spring.SpringContextService;
+
 import java.util.Collection;
+
 
 /**
  * This class provides instances management methods (create, find, ...) for Avatar objects
  */
-
 public final class AvatarHome
 {
+    // Static variable pointed at the DAO instance
+    private static IAvatarDAO _dao = SpringContextService.getBean( "avatarserver.avatarDAO" );
+    private static Plugin _plugin = PluginService.getPlugin( "avatarserver" );
 
-	// Static variable pointed at the DAO instance
+    /**
+     * Private constructor - this class need not be instantiated
+     */
+    private AvatarHome(  )
+    {
+    }
 
-	private static IAvatarDAO _dao = SpringContextService.getBean( "avatarserver.avatarDAO" );
-	private static Plugin _plugin = PluginService.getPlugin( "avatarserver" );
+    public static Avatar findByHash( String strHash )
+    {
+        return _dao.selectByHash( strHash, _plugin );
+    }
 
-	/**
-	 * Private constructor - this class need not be instantiated
-	 */
-	private AvatarHome(  )
-	{
-	}
+    /**
+     * Create an instance of the avatar class
+     * @param avatar The instance of the Avatar which contains the informations to store
+     * @return The  instance of avatar which has been created with its primary key.
+     */
+    public static Avatar create( Avatar avatar )
+    {
+        avatar.setHash( HashService.getHash( avatar.getEmail(  ) ) );
+        _dao.insert( avatar, _plugin );
 
-	/**
-	 * Create an instance of the avatar class
-	 * @param avatar The instance of the Avatar which contains the informations to store
-	 * @return The  instance of avatar which has been created with its primary key.
-	 */
-	public static Avatar create( Avatar avatar )
-	{
-		_dao.insert( avatar, _plugin );
+        return avatar;
+    }
 
-		return avatar;
-	}
+    /**
+     * Update of the avatar which is specified in parameter
+     * @param avatar The instance of the Avatar which contains the data to store
+     * @return The instance of the  avatar which has been updated
+     */
+    public static Avatar update( Avatar avatar )
+    {
+        avatar.setHash( HashService.getHash( avatar.getEmail(  ) ) );
+        _dao.store( avatar, _plugin );
 
+        return avatar;
+    }
 
-	/**
-	 * Update of the avatar which is specified in parameter
-	 * @param avatar The instance of the Avatar which contains the data to store
-	 * @return The instance of the  avatar which has been updated
-	 */
-	public static Avatar update( Avatar avatar )
-	{
-		_dao.store( avatar, _plugin );
+    /**
+     * Remove the avatar whose identifier is specified in parameter
+     * @param nAvatarId The avatar Id
+     */
+    public static void remove( int nAvatarId )
+    {
+        _dao.delete( nAvatarId, _plugin );
+    }
 
-		return avatar;
-	}
+    ///////////////////////////////////////////////////////////////////////////
+    // Finders
 
+    /**
+     * Returns an instance of a avatar whose identifier is specified in parameter
+     * @param nKey The avatar primary key
+     * @return an instance of Avatar
+     */
+    public static Avatar findByPrimaryKey( int nKey )
+    {
+        return _dao.load( nKey, _plugin );
+    }
 
-	/**
-	 * Remove the avatar whose identifier is specified in parameter
-	 * @param nAvatarId The avatar Id
-	 */
-	public static void remove( int nAvatarId )
-	{
-		_dao.delete( nAvatarId, _plugin );
-	}
-
-
-	///////////////////////////////////////////////////////////////////////////
-	// Finders
-
-	/**
-	 * Returns an instance of a avatar whose identifier is specified in parameter
-	 * @param nKey The avatar primary key
-	 * @return an instance of Avatar
-	 */
-	public static Avatar findByPrimaryKey( int nKey )
-	{
-		return _dao.load( nKey, _plugin);
-	}
-
-
-	/**
-	 * Load the data of all the avatar objects and returns them in form of a collection
-	 * @return the collection which contains the data of all the avatar objects
-	 */
-	public static Collection<Avatar> getAvatarsList( )
-	{
-		return _dao.selectAvatarsList( _plugin );
-	}
+    /**
+     * Load the data of all the avatar objects and returns them in form of a collection
+     * @return the collection which contains the data of all the avatar objects
+     */
+    public static Collection<Avatar> getAvatarsList(  )
+    {
+        return _dao.selectAvatarsList( _plugin );
+    }
 }
-

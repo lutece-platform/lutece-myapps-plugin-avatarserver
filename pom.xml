@@ -29,6 +29,12 @@
             <version>[4.1.0,)</version>
             <type>lutece-core</type>
         </dependency>
+        <dependency>
+            <artifactId>plugin-rest</artifactId>
+            <groupId>fr.paris.lutece.plugins</groupId>
+            <version>[1.0.0,)</version>
+            <type>lutece-plugin</type>
+        </dependency>
     </dependencies>
 
     <properties>

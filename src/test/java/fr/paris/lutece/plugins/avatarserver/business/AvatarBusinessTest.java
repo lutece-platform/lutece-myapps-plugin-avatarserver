@@ -31,7 +31,6 @@
  *
  * License 1.0
  */
-
 package fr.paris.lutece.plugins.avatarserver.business;
 
 import fr.paris.lutece.test.LuteceTestCase;
@@ -49,36 +48,35 @@ public class AvatarBusinessTest extends LuteceTestCase
     public void testBusiness(  )
     {
         // Initialize an object
-        Avatar avatar = new Avatar();
+        Avatar avatar = new Avatar(  );
         avatar.setId( IDAVATAR1 );
         avatar.setEmail( EMAIL1 );
         avatar.setAvatarImage( AVATARIMAGE1 );
 
         // Create test
         AvatarHome.create( avatar );
-        Avatar avatarStored = AvatarHome.findByPrimaryKey( avatar.getId() );
-        assertEquals( avatarStored.getId() , avatar.getId() );
-        assertEquals( avatarStored.getEmail() , avatar.getEmail() );
-        assertEquals( avatarStored.getAvatarImage() , avatar.getAvatarImage() );
+
+        Avatar avatarStored = AvatarHome.findByPrimaryKey( avatar.getId(  ) );
+        assertEquals( avatarStored.getId(  ), avatar.getId(  ) );
+        assertEquals( avatarStored.getEmail(  ), avatar.getEmail(  ) );
+        assertEquals( avatarStored.getAvatarImage(  ), avatar.getAvatarImage(  ) );
 
         // Update test
         avatar.setId( IDAVATAR2 );
         avatar.setEmail( EMAIL2 );
         avatar.setAvatarImage( AVATARIMAGE2 );
         AvatarHome.update( avatar );
-        avatarStored = AvatarHome.findByPrimaryKey( avatar.getId() );
-        assertEquals( avatarStored.getId() , avatar.getId() );
-        assertEquals( avatarStored.getEmail() , avatar.getEmail() );
-        assertEquals( avatarStored.getAvatarImage() , avatar.getAvatarImage() );
+        avatarStored = AvatarHome.findByPrimaryKey( avatar.getId(  ) );
+        assertEquals( avatarStored.getId(  ), avatar.getId(  ) );
+        assertEquals( avatarStored.getEmail(  ), avatar.getEmail(  ) );
+        assertEquals( avatarStored.getAvatarImage(  ), avatar.getAvatarImage(  ) );
 
         // List test
-        AvatarHome.getAvatarsList();
+        AvatarHome.getAvatarsList(  );
 
         // Delete test
-        AvatarHome.remove( avatar.getId() );
-        avatarStored = AvatarHome.findByPrimaryKey( avatar.getId() );
+        AvatarHome.remove( avatar.getId(  ) );
+        avatarStored = AvatarHome.findByPrimaryKey( avatar.getId(  ) );
         assertNull( avatarStored );
-        
     }
-
 }

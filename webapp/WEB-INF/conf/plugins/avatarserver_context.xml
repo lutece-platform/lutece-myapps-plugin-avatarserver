@@ -5,4 +5,7 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd" >
 
     <bean id="avatarserver.avatarDAO"  class="fr.paris.lutece.plugins.avatarserver.business.AvatarDAO" />  
+    
+    <bean id="avatarserver.avatarRest" class="fr.paris.lutece.plugins.avatarserver.web.rs.AvatarRest" />
+    
 </beans>

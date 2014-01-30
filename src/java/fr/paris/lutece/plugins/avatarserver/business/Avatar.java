@@ -33,35 +33,36 @@
  */
 package fr.paris.lutece.plugins.avatarserver.business;
 
-import javax.validation.constraints.*;
 import org.hibernate.validator.constraints.*;
+
+import javax.validation.constraints.*;
+
 
 /**
  * This is the business class for the object Avatar
  */
-public class Avatar {
-
+public class Avatar
+{
     // Variables declarations 
     private byte[] _byValue;
     private String _strMimeType;
+    private String _strHash;
     private int _nIdAvatar;
-    
+
     // @NotEmpty( message = "#i18n{avatarserver.validation.avatar.Email.notEmpty}" )
-    @NotEmpty(message = "#i18n{portal.validation.message.notEmpty}")
+    @NotEmpty( message = "#i18n{portal.validation.message.notEmpty}" )
     // @Size( max = 255 , message = "#i18n{avatarserver.validation.avatar.Email.size}" ) 
-    @Size(max = 255, message = "#i18n{portal.validation.message.sizeMax}")
-    @Email(message = "#i18n{portal.validation.message.email}")
+    @Size( max = 255, message = "#i18n{portal.validation.message.sizeMax}" )
+    @Email( message = "#i18n{portal.validation.message.email}" )
     private String _strEmail;
-
-
-   
 
     /**
      * Returns the IdAvatar
      *
      * @return The IdAvatar
      */
-    public int getId() {
+    public int getId(  )
+    {
         return _nIdAvatar;
     }
 
@@ -70,7 +71,8 @@ public class Avatar {
      *
      * @param nIdAvatar The IdAvatar
      */
-    public void setId(int nIdAvatar) {
+    public void setId( int nIdAvatar )
+    {
         _nIdAvatar = nIdAvatar;
     }
 
@@ -79,7 +81,8 @@ public class Avatar {
      *
      * @return The Email
      */
-    public String getEmail() {
+    public String getEmail(  )
+    {
         return _strEmail;
     }
 
@@ -88,26 +91,24 @@ public class Avatar {
      *
      * @param strEmail The Email
      */
-    public void setEmail(String strEmail) {
+    public void setEmail( String strEmail )
+    {
         _strEmail = strEmail;
     }
-    
-   
-   
+
     /**
      * Returns the icon name
      *
      * @return the icon name
      */
-    
-   
 
     /**
      * get the icon file value
      *
      * @return the icon file value
      */
-    public byte[] getValue() {
+    public byte[] getValue(  )
+    {
         return _byValue;
     }
 
@@ -116,7 +117,8 @@ public class Avatar {
      *
      * @param value the file value
      */
-    public void setValue(byte[] value) {
+    public void setValue( byte[] value )
+    {
         _byValue = value;
     }
 
@@ -125,7 +127,8 @@ public class Avatar {
      *
      * @return the icon mime type
      */
-    public String getMimeType() {
+    public String getMimeType(  )
+    {
         return _strMimeType;
     }
 
@@ -134,19 +137,18 @@ public class Avatar {
      *
      * @param mimeType the icon mime type
      */
-    public void setMimeType(String mimeType) {
+    public void setMimeType( String mimeType )
+    {
         _strMimeType = mimeType;
     }
 
-    /**
-     * @return the icon height
-     */
-  
+    public String getHash(  )
+    {
+        return _strHash;
+    }
 
-    /**
-     * @return the icon width
-     */
-    
+    public void setHash( String hash )
+    {
+        _strHash = hash;
+    }
 }
-
-
