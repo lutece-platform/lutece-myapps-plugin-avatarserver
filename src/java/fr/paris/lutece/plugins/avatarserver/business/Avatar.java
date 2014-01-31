@@ -96,11 +96,7 @@ public class Avatar
         _strEmail = strEmail;
     }
 
-    /**
-     * Returns the icon name
-     *
-     * @return the icon name
-     */
+    
 
     /**
      * get the icon file value
@@ -141,12 +137,22 @@ public class Avatar
     {
         _strMimeType = mimeType;
     }
-
+    
+    /**
+    * the hash
+    * 
+    * @return the hash 
+    */
     public String getHash(  )
     {
         return _strHash;
     }
-
+    
+    /**
+     * set the hash
+     * 
+     * @param hash the hash 
+     */
     public void setHash( String hash )
     {
         _strHash = hash;

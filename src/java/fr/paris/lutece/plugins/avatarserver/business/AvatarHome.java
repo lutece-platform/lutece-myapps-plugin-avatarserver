@@ -56,7 +56,12 @@ public final class AvatarHome
     private AvatarHome(  )
     {
     }
-
+    
+    /**
+     * Returns an instance of a avatar whose identifier is specified in parameter
+     * @param strHash The avatar hash created with the email address 
+     * @return an instance of Avatar
+     */
     public static Avatar findByHash( String strHash )
     {
         return _dao.selectByHash( strHash, _plugin );
