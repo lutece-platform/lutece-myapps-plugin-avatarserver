@@ -1,25 +1,59 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <document>
     <properties>
-        <title>Plugin avatarserver</title>
+        <title>Avatar Server Plugin</title>
     </properties>
     <body>
-        <section name="Plugin avatarserver">
-            <!--
+        <section name="Avatar Server Plugin">
+            
             <p>
                 <img src="images/avatarserver.png" />
             </p>
-            -->
+          
             <subsection name="Introduction">
-                <p></p>
+                <p>
+                    This plugin allows you to use avatars associated to emails
+                    in a same way as the Gravatar site. 
+                </p>
             </subsection>
             <subsection name="Configuration">
-                <p></p>
+                <p>
+                     The configuration must include:
+                 </p>
+                 <ul>
+                     <li>
+                         the default image's url to return when there is no avatar
+                         in the database corresponding to the requested email.
+                     </li>
+                     <li>
+                         size in which the images will be stored.
+                     </li>
+                 </ul>
+                 <div class="source">
+                    <pre># avatarserver properties file
+
+# default avatar image
+avatarserver.default.avatar.url=../../images/local/skin/plugins/avatarserver/avatar.jpg
+
+# Storage size
+avatarserver.avatar.size=100
+                    </pre>
+                </div>
             </subsection>
             <subsection name="Usage">
-                <p></p>
+                <p>
+                    L'accès à l'image de l'avatar se fait par l'url suivante où 
+                    la valeur HASH est le condensat MD5 de l'email de l'utilisateur
+                    à afficher.
+                </p>
+                <div class="source">
+                    <pre>http://avatar.mydomain.com/[context]/rest/avatarserver/HASH
+                    </pre>
+                </div>
+                
             </subsection>
         </section>
     </body>
 </document>
+
 

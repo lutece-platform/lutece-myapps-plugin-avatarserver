@@ -4,20 +4,55 @@
         <title>Plugin avatarserver</title>
     </properties>
     <body>
-        <section name="Plugin avatarserver">
-            <!--
+        <section name="Plugin Avatar Server">
+            
             <p>
                 <img src="images/avatarserver.png" />
             </p>
-            -->
+          
             <subsection name="Introduction">
-                <p></p>
+                <p>
+                    Ce plugin permet de servir des avatars associés à des adresses
+                    mail à la manière du site Gravatar.
+                </p>
             </subsection>
             <subsection name="Configuration">
-                <p></p>
+                <p>
+                    La configuration doit indiquer : 
+                </p>
+                <ul>
+                    <li>
+                        la valeur par défaut de l'url de 
+                        l'image à renvoyer lorsqu'il n'y a pas d'avatar 
+                        dans la base correspondant à l'email demandé. 
+                    </li>
+                    <li>
+                        la taille dans laquelle seront stockées les images. 
+                    </li>
+
+                </ul>
+                <div class="source">
+                    <pre># avatarserver properties file
+
+# default avatar image
+avatarserver.default.avatar.url=../../images/local/skin/plugins/avatarserver/avatar.jpg
+
+# Storage size
+avatarserver.avatar.size=100
+                    </pre>
+                </div>
             </subsection>
             <subsection name="Usage">
-                <p></p>
+                <p>
+                    L'accès à l'image de l'avatar se fait par l'url suivante où 
+                    la valeur HASH est le condensat MD5 de l'email de l'utilisateur
+                    à afficher.
+                </p>
+                <div class="source">
+                    <pre>http://avatar.mydomain.com/[context]/rest/avatarserver/HASH
+                    </pre>
+                </div>
+                
             </subsection>
         </section>
     </body>
