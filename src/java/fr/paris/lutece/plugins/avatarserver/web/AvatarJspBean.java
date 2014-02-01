@@ -35,8 +35,7 @@ package fr.paris.lutece.plugins.avatarserver.web;
 
 import fr.paris.lutece.plugins.avatarserver.business.Avatar;
 import fr.paris.lutece.plugins.avatarserver.business.AvatarHome;
-import fr.paris.lutece.portal.service.fileupload.FileUploadService;
-import fr.paris.lutece.portal.service.image.ImageResource;
+import fr.paris.lutece.plugins.avatarserver.service.AvatarService;
 import fr.paris.lutece.portal.service.message.AdminMessage;
 import fr.paris.lutece.portal.service.message.AdminMessageService;
 import fr.paris.lutece.portal.service.util.AppPropertiesService;
@@ -174,7 +173,7 @@ public class AvatarJspBean extends ManageAvatarserverJspBean
             return redirectView( request, VIEW_CREATE_AVATAR );
         }
 
-        AvatarHome.create( _avatar );
+        AvatarService.create( _avatar );
         _avatar = null;
         addInfo( INFO_AVATAR_CREATED, getLocale(  ) );
 
@@ -250,13 +249,19 @@ public class AvatarJspBean extends ManageAvatarserverJspBean
     {
         populate( _avatar, request );
 
+        MultipartHttpServletRequest multiPartRequest = (MultipartHttpServletRequest) request;
+        FileItem imageSource = multiPartRequest.getFile( PARAMETER_IMAGE );
+
+        _avatar.setValue( imageSource.get(  ) );
+        _avatar.setMimeType( imageSource.getContentType(  ) );
+
         // Check constraints
         if ( !validateBean( _avatar, VALIDATION_ATTRIBUTES_PREFIX ) )
         {
             return redirect( request, VIEW_MODIFY_AVATAR, PARAMETER_ID_AVATAR, _avatar.getId(  ) );
         }
 
-        AvatarHome.update( _avatar );
+        AvatarService.update( _avatar );
         _avatar = null;
         addInfo( INFO_AVATAR_UPDATED, getLocale(  ) );
 

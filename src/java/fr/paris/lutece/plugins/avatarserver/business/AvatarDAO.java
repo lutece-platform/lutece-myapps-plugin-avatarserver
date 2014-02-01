@@ -84,7 +84,6 @@ public final class AvatarDAO implements IAvatarDAO
     public void insert( Avatar avatar, Plugin plugin )
     {
         DAOUtil daoUtil = new DAOUtil( SQL_QUERY_INSERT, plugin );
-        int nPos = 2;
         avatar.setId( newPrimaryKey( plugin ) );
         daoUtil.setInt( 1, avatar.getId(  ) );
         daoUtil.setString( 2, avatar.getEmail(  ) );
@@ -141,12 +140,12 @@ public final class AvatarDAO implements IAvatarDAO
     public void store( Avatar avatar, Plugin plugin )
     {
         DAOUtil daoUtil = new DAOUtil( SQL_QUERY_UPDATE, plugin );
-        int nPos = 2;
         daoUtil.setInt( 1, avatar.getId(  ) );
         daoUtil.setString( 2, avatar.getEmail(  ) );
         daoUtil.setString( 3, avatar.getMimeType(  ) );
         daoUtil.setBytes( 4, avatar.getValue(  ) );
         daoUtil.setString( 5, avatar.getHash(  ) );
+        daoUtil.setInt( 6, avatar.getId(  ) );
         daoUtil.executeUpdate(  );
         daoUtil.free(  );
     }

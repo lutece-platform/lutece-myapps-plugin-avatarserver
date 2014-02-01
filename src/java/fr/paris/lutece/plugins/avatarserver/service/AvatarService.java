@@ -33,24 +33,51 @@
  */
 package fr.paris.lutece.plugins.avatarserver.service;
 
-import fr.paris.lutece.portal.service.plugin.PluginDefaultImplementation;
+import fr.paris.lutece.plugins.avatarserver.business.Avatar;
+import fr.paris.lutece.plugins.avatarserver.business.AvatarHome;
+import fr.paris.lutece.portal.service.util.AppPropertiesService;
 
 
 /**
- *
- * class AppStorePlugin
- *
+ * Avatar Service
  */
-public class AvatarServerPlugin extends PluginDefaultImplementation
+public class AvatarService
 {
-    public static final String PLUGIN_NAME = "avatarserver";
+    private static final String PROPERTY_SIZE = "avatarserver.avatar.size";
+    private static final int DEFAULT_SIZE = 100;
 
     /**
-     * Initialize the AppStorePlugin
+     * Create an instance of the avatar class
+     * @param avatar The instance of the Avatar which contains the informations to store
+     * @return The  instance of avatar which has been created with its primary key.
      */
-    @Override
-    public void init(  )
+    public static Avatar create( Avatar avatar )
     {
-        AvatarResourceProvider.getInstance(  ).register(  );
+        avatar.setHash( HashService.getHash( avatar.getEmail(  ) ) );
+        avatar.setValue( ImageService.resizeImage( avatar.getValue(  ), getSize(  ) ) );
+
+        return AvatarHome.create( avatar );
+    }
+
+    /**
+     * Update an instance of the avatar class
+     * @param avatar The instance of the Avatar which contains the informations to store
+     * @return The  instance of avatar which has been created with its primary key.
+     */
+    public static Avatar update( Avatar avatar )
+    {
+        avatar.setHash( HashService.getHash( avatar.getEmail(  ) ) );
+        avatar.setValue( ImageService.resizeImage( avatar.getValue(  ), getSize(  ) ) );
+
+        return AvatarHome.update( avatar );
+    }
+
+    /**
+     * Get the avatar size
+     * @return The size
+     */
+    private static int getSize(  )
+    {
+        return AppPropertiesService.getPropertyInt( PROPERTY_SIZE, DEFAULT_SIZE );
     }
 }

@@ -33,24 +33,53 @@
  */
 package fr.paris.lutece.plugins.avatarserver.service;
 
-import fr.paris.lutece.portal.service.plugin.PluginDefaultImplementation;
+import fr.paris.lutece.portal.service.util.AppLogService;
+
+import org.imgscalr.Scalr;
+
+import java.awt.image.BufferedImage;
+
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+
+import javax.imageio.ImageIO;
 
 
 /**
- *
- * class AppStorePlugin
- *
+ * Image Service
  */
-public class AvatarServerPlugin extends PluginDefaultImplementation
+public class ImageService
 {
-    public static final String PLUGIN_NAME = "avatarserver";
+    /** Parameter JPG */
+    private static final String PARAMETER_JPG = "jpg";
 
     /**
-     * Initialize the AppStorePlugin
+     * Resize an image
+     * @param byteArray the original byte arrau
+     * @param width the new width
+     * @return the resize byte array
+     * @throws IOException occurs during treatment
      */
-    @Override
-    public void init(  )
+    public static byte[] resizeImage( byte[] byteArray, int width )
     {
-        AvatarResourceProvider.getInstance(  ).register(  );
+        try
+        {
+            // Crop image if needed
+            ByteArrayInputStream in = new ByteArrayInputStream( byteArray );
+            ByteArrayOutputStream out = new ByteArrayOutputStream(  );
+            BufferedImage image = ImageIO.read( in );
+            BufferedImage resizedImage;
+            resizedImage = Scalr.resize( image, Scalr.Mode.FIT_TO_WIDTH, width );
+            ImageIO.write( resizedImage, PARAMETER_JPG, out );
+
+            return out.toByteArray(  );
+        }
+        catch ( IOException ex )
+        {
+            AppLogService.error( "Avatar - Image Service - Error resizing image : " + ex.getMessage(  ), ex );
+        }
+
+        return byteArray;
     }
 }

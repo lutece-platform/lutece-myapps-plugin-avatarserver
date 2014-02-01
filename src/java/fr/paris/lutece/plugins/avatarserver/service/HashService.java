@@ -34,8 +34,6 @@
 package fr.paris.lutece.plugins.avatarserver.service;
 
 import fr.paris.lutece.portal.service.util.AppLogService;
-import fr.paris.lutece.portal.service.util.AppPropertiesService;
-import fr.paris.lutece.util.url.UrlItem;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;

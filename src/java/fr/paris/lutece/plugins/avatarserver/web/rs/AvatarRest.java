@@ -45,7 +45,6 @@ import org.apache.log4j.Logger;
 import java.io.IOException;
 import java.io.OutputStream;
 
-
 import javax.servlet.http.HttpServletResponse;
 
 import javax.ws.rs.GET;
@@ -92,7 +91,7 @@ public class AvatarRest
         else
         {
             String strDefaultAvatarUrl = AppPropertiesService.getProperty( PROPERTY_DEFAULT_AVATAR_URL );
-            response.sendRedirect(strDefaultAvatarUrl);
+            response.sendRedirect( strDefaultAvatarUrl );
         }
 
         return "";
