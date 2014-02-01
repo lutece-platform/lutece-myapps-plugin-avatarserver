@@ -10,7 +10,7 @@
     <description>avatarserver.plugin.description</description>
     <provider>avatarserver.plugin.provider</provider>
     <provider-url>http://fr.lutece.paris.fr</provider-url>
-    <icon-url>images/admin/skin/feature_default_icon.png</icon-url>
+    <icon-url>images/admin/skin/plugins/avatarserver/avatarserver.png</icon-url>
     <copyright>Copyright (c) 2014 Mairie de Paris</copyright>
     <db-pool-required>1</db-pool-required>
     

@@ -38,13 +38,13 @@ import com.sun.jersey.api.Responses;
 import fr.paris.lutece.plugins.avatarserver.business.Avatar;
 import fr.paris.lutece.plugins.avatarserver.business.AvatarHome;
 import fr.paris.lutece.plugins.rest.service.RestConstants;
+import fr.paris.lutece.portal.service.util.AppPropertiesService;
 
 import org.apache.log4j.Logger;
 
 import java.io.IOException;
 import java.io.OutputStream;
 
-import javax.imageio.ImageIO;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -64,6 +64,7 @@ import javax.ws.rs.core.HttpHeaders;
 @Path( RestConstants.BASE_PATH + "avatarserver/" )
 public class AvatarRest
 {
+    private static final String PROPERTY_DEFAULT_AVATAR_URL = "avatarserver.default.avatar.url";
     @Context
     HttpHeaders header;
     @Context
@@ -87,10 +88,15 @@ public class AvatarRest
             OutputStream out = response.getOutputStream(  );
             out.write( avatar.getValue(  ) );
             out.close(  );
-
-            return "";
+        }
+        else
+        {
+            String strDefaultAvatarUrl = AppPropertiesService.getProperty( PROPERTY_DEFAULT_AVATAR_URL );
+            response.sendRedirect(strDefaultAvatarUrl);
         }
 
-        throw new WebApplicationException( Responses.NOT_FOUND );
+        return "";
+
+        // throw new WebApplicationException( Responses.NOT_FOUND );
     }
 }

@@ -51,7 +51,7 @@ public class AvatarBusinessTest extends LuteceTestCase
         Avatar avatar = new Avatar(  );
         avatar.setId( IDAVATAR1 );
         avatar.setEmail( EMAIL1 );
-        avatar.setAvatarImage( AVATARIMAGE1 );
+        avatar.setValue( AVATARIMAGE1.getBytes() );
 
         // Create test
         AvatarHome.create( avatar );
@@ -59,17 +59,17 @@ public class AvatarBusinessTest extends LuteceTestCase
         Avatar avatarStored = AvatarHome.findByPrimaryKey( avatar.getId(  ) );
         assertEquals( avatarStored.getId(  ), avatar.getId(  ) );
         assertEquals( avatarStored.getEmail(  ), avatar.getEmail(  ) );
-        assertEquals( avatarStored.getAvatarImage(  ), avatar.getAvatarImage(  ) );
+        assertEquals( avatarStored.getValue(  ), avatar.getValue(  ) );
 
         // Update test
         avatar.setId( IDAVATAR2 );
         avatar.setEmail( EMAIL2 );
-        avatar.setAvatarImage( AVATARIMAGE2 );
+        avatar.setValue( AVATARIMAGE2.getBytes() );
         AvatarHome.update( avatar );
         avatarStored = AvatarHome.findByPrimaryKey( avatar.getId(  ) );
         assertEquals( avatarStored.getId(  ), avatar.getId(  ) );
         assertEquals( avatarStored.getEmail(  ), avatar.getEmail(  ) );
-        assertEquals( avatarStored.getAvatarImage(  ), avatar.getAvatarImage(  ) );
+        assertEquals( avatarStored.getValue(  ), avatar.getValue(  ) );
 
         // List test
         AvatarHome.getAvatarsList(  );
