@@ -33,8 +33,6 @@
  */
 package fr.paris.lutece.plugins.avatarserver.web.rs;
 
-import com.sun.jersey.api.Responses;
-
 import fr.paris.lutece.plugins.avatarserver.business.Avatar;
 import fr.paris.lutece.plugins.avatarserver.business.AvatarHome;
 import fr.paris.lutece.plugins.rest.service.RestConstants;
@@ -51,7 +49,6 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
-import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.HttpHeaders;
 
@@ -65,37 +62,43 @@ public class AvatarRest
 {
     private static final String PROPERTY_DEFAULT_AVATAR_URL = "avatarserver.default.avatar.url";
     @Context
-    HttpHeaders header;
+    HttpHeaders _header;
     @Context
-    HttpServletResponse response;
+    HttpServletResponse _response;
     private Logger _logger = Logger.getLogger( RestConstants.REST_LOGGER );
 
+    /**
+     * Return the avatar for a given hash
+     * @param strHash The hash
+     * @return The avatar's image
+     * @throws IOException if an error occurs
+     */
     @GET
     @Path( "/{hash}" )
     @Produces( "image/*" )
-    public String getPackageList( @PathParam( "hash" )
+    public String getAvatar( @PathParam( "hash" )
     String strHash ) throws IOException
     {
+        _logger.debug( "Avatar requested for hash = " + strHash );
+
         Avatar avatar = AvatarHome.findByHash( strHash );
 
         if ( avatar != null )
         {
-            response.setContentType( "images/jpg" );
-            response.setHeader( "Content-Type", avatar.getMimeType(  ) );
-            response.setHeader( "Content-Disposition", "inline; filename=\"" + "avatar" + "\"" );
+            _response.setContentType( "images/jpg" );
+            _response.setHeader( "Content-Type", avatar.getMimeType(  ) );
+            _response.setHeader( "Content-Disposition", "inline; filename=\"" + "avatar" + "\"" );
 
-            OutputStream out = response.getOutputStream(  );
+            OutputStream out = _response.getOutputStream(  );
             out.write( avatar.getValue(  ) );
             out.close(  );
         }
         else
         {
             String strDefaultAvatarUrl = AppPropertiesService.getProperty( PROPERTY_DEFAULT_AVATAR_URL );
-            response.sendRedirect( strDefaultAvatarUrl );
+            _response.sendRedirect( strDefaultAvatarUrl );
         }
 
         return "";
-
-        // throw new WebApplicationException( Responses.NOT_FOUND );
     }
 }

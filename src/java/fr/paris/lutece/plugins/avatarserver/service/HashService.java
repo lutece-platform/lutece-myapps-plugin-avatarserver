@@ -43,8 +43,18 @@ import java.security.NoSuchAlgorithmException;
  * Hash Service
  *
  */
-public class HashService
+public final class HashService
 {
+    /** Private constructor */
+    private HashService(  )
+    {
+    }
+
+    /**
+     * Calculate the Hash corresponding to the given email
+     * @param strAvatarEmail The Email
+     * @return The Hash
+     */
     public static String getHash( String strAvatarEmail )
     {
         String strEmail = strAvatarEmail.toLowerCase(  );

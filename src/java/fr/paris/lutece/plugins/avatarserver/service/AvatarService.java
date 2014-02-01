@@ -41,10 +41,15 @@ import fr.paris.lutece.portal.service.util.AppPropertiesService;
 /**
  * Avatar Service
  */
-public class AvatarService
+public final class AvatarService
 {
     private static final String PROPERTY_SIZE = "avatarserver.avatar.size";
     private static final int DEFAULT_SIZE = 100;
+
+    /** Private constructor */
+    private AvatarService(  )
+    {
+    }
 
     /**
      * Create an instance of the avatar class

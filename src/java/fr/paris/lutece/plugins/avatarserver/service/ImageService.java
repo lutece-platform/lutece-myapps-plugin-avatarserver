@@ -49,17 +49,21 @@ import javax.imageio.ImageIO;
 /**
  * Image Service
  */
-public class ImageService
+public final class ImageService
 {
     /** Parameter JPG */
     private static final String PARAMETER_JPG = "jpg";
+
+    /** Private constructor */
+    private ImageService(  )
+    {
+    }
 
     /**
      * Resize an image
      * @param byteArray the original byte arrau
      * @param width the new width
      * @return the resize byte array
-     * @throws IOException occurs during treatment
      */
     public static byte[] resizeImage( byte[] byteArray, int width )
     {

@@ -71,7 +71,6 @@ public class AvatarJspBean extends ManageAvatarserverJspBean
 
     // Parameters
     private static final String PARAMETER_ID_AVATAR = "id_avatar";
-    private static final String EMPTY_STRING = "";
     private static final String PARAMETER_IMAGE = "avatar_image";
 
     // Properties for page titles
@@ -108,6 +107,11 @@ public class AvatarJspBean extends ManageAvatarserverJspBean
     // Session variable to store working values
     private Avatar _avatar;
 
+    /**
+     * Returns the Manage avatars page
+     * @param request The HTTP request
+     * @return The page
+     */
     @View( value = VIEW_MANAGE_AVATARS, defaultView = true )
     public String getManageAvatars( HttpServletRequest request )
     {
