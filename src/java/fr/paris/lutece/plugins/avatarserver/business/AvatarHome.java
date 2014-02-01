@@ -33,7 +33,6 @@
  */
 package fr.paris.lutece.plugins.avatarserver.business;
 
-import fr.paris.lutece.plugins.avatarserver.service.HashService;
 import fr.paris.lutece.portal.service.plugin.Plugin;
 import fr.paris.lutece.portal.service.plugin.PluginService;
 import fr.paris.lutece.portal.service.spring.SpringContextService;
@@ -74,7 +73,6 @@ public final class AvatarHome
      */
     public static Avatar create( Avatar avatar )
     {
-        avatar.setHash( HashService.getHash( avatar.getEmail(  ) ) );
         _dao.insert( avatar, _plugin );
 
         return avatar;
@@ -87,7 +85,6 @@ public final class AvatarHome
      */
     public static Avatar update( Avatar avatar )
     {
-        avatar.setHash( HashService.getHash( avatar.getEmail(  ) ) );
         _dao.store( avatar, _plugin );
 
         return avatar;
