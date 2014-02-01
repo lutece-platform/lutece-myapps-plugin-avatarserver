@@ -1,12 +1,11 @@
-<?xml version="1.0" encoding="ISO-8859-1"?>
-<plug-in>
+<?xml version="1.0" encoding="ISO-8859-1" standalone="no"?><plug-in>
     <name>avatarserver</name>
     <class>fr.paris.lutece.plugins.avatarserver.service.AvatarServerPlugin</class>
     <version>1.0.0</version>
-    <documentation></documentation>
-    <installation></installation>
-    <changes></changes>
-    <user-guide></user-guide>
+    <documentation/>
+    <installation/>
+    <changes/>
+    <user-guide/>
     <description>avatarserver.plugin.description</description>
     <provider>avatarserver.plugin.provider</provider>
     <provider-url>http://fr.lutece.paris.fr</provider-url>
@@ -22,7 +21,7 @@
             <feature-description>avatarserver.adminFeature.ManageAvatarserver.description</feature-description>
             <feature-level>0</feature-level>
             <feature-url>jsp/admin/plugins/avatarserver/ManageAvatars.jsp</feature-url>
-            <feature-icon-url></feature-icon-url>
+            <feature-icon-url/>
       </admin-feature>
     </admin-features>    
   	<!-- XPages parameters -->
