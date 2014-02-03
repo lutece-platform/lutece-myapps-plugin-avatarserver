@@ -1,0 +1,53 @@
+<div>
+    
+    
+<div class="row" >
+    <div class="span3">
+         <#if avatar_id??>
+            <img class="avatar avatar-large" src="image?resource_type=avatar_img&id=${avatar_id}" alt="Avatar" title="Avatar" />
+         <#else>
+            No avatar defined !
+         </#if>
+         
+         Email : ${email!"No email"}
+         
+         <a class="btn btn-primary btn-small" href="jsp/site/Portal.jsp?page=mydasboard" title="retour">
+             Return à mon tableau de bord
+         </a>
+         
+    </div>
+    
+    <div class="span7">
+
+    <form class="form-horizontal" method="post" action="jsp/site/plugins/avatarserver/ModifyAvatar.jsp" enctype="multipart/form-data">
+        <fieldset>
+            <legend>#i18n{avatarserver.modify_avatar.tableLabel}</legend>
+
+            <@messages errors=errors />
+
+         <#if avatar??>
+            <input type="hidden" id="id_avatar" name="id_avatar" value="${avatar.id}"/>
+         </#if>   
+            <div class="control-group">
+                <label class="control-label" for="avatar_image" >#i18n{avatarserver.modify_avatar.labelAvatarImage} * :</label>
+                <div class="controls">
+                    <input type="file" id="avatar_image" name="avatar_image" maxlength="50" tabindex="2" />
+                    <span class="help-block">#i18n{avatarserver.create_avatar.labelAvatarImage.help}</span>
+                </div>
+            </div>
+
+
+            <div class="form-actions">   
+                <button name="action_modifyAvatar" class="btn btn-primary" type="submit" tabindex="3" >
+                    #i18n{portal.util.labelModify}
+                </button>
+                <button name="view_manageAvatars" class="btn" type="submit" >
+                    #i18n{portal.util.labelCancel}
+                </button>	
+            </div>
+
+        </fieldset>
+    </form>
+    </div>  
+
+</div>

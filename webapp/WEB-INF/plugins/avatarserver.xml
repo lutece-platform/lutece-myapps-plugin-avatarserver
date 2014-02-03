@@ -23,11 +23,16 @@
             <feature-url>jsp/admin/plugins/avatarserver/ManageAvatars.jsp</feature-url>
             <feature-icon-url/>
       </admin-feature>
-    </admin-features>    
-  	<!-- XPages parameters -->
+    </admin-features>  
+    
+        
+    <!-- XPages -->
     <applications>
+        <application>
+            <application-id>avatarserver</application-id>
+            <application-class>fr.paris.lutece.plugins.avatarserver.web.AvatarServerApp</application-class>
+        </application>
     </applications>
-	<!-- Portlet parameters -->
-    <portlets>
-   </portlets>
+    
+
 </plug-in>
