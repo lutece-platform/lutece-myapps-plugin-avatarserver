@@ -1,0 +1,57 @@
+<div>
+    
+    
+<div class="row" >
+    <div class="span3 well">
+         <#if avatar_id??>
+         <h3>#i18n{avatarserver.update_avatar.labelCurrentAvatar}</h3>
+            <img class="avatar avatar-large" src="image?resource_type=avatar_img&id=${avatar_id}" alt="Avatar" title="Avatar" />
+         <#else>
+         <h3>#i18n{avatarserver.update_avatar.labelNoAvatar}</h3>
+          <img class="avatar avatar-large" src="images/local/skin/plugins/avatarserver/avatar.jpg" alt="Avatar" title="Avatar"  />
+         </#if>
+         <br />
+         <br />
+         <br />
+        
+         <a class="btn btn-primary btn-small" href="${url_back}" title="retour">
+             #i18n{avatarserver.update_avatar.buttonBack}
+         </a>
+         
+    </div>
+    
+    <div class="span7">
+
+    <form class="form-horizontal" method="post" action="jsp/site/plugins/avatarserver/DoUpdateAvatar.jsp" enctype="multipart/form-data">
+        <fieldset>
+            <legend>#i18n{avatarserver.update_avatar.titleUpdateAvatar}</legend>
+            <@messages errors=errors />
+
+         <#if avatar??>
+            <input type="hidden" id="avatar_id" name="avatar_id" value="${avatar.id}"/>
+         </#if>   
+            <div class="control-group">
+                <label class="control-label" for="avatar_email" >#i18n{avatarserver.update_avatar.labelAvatarEmail}  :</label>
+                <div class="controls">
+                  ${email}
+                </div>
+            </div>
+            <div class="control-group">
+                <label class="control-label" for="avatar_image" >#i18n{avatarserver.update_avatar.labelAvatarImage} * :</label>
+                <div class="controls">
+                    <input type="file" id="avatar_image" name="avatar_image" maxlength="50" tabindex="2" />
+                    <span class="help-block">#i18n{avatarserver.update_avatar.labelAvatarImage.help}</span>
+                </div>
+            </div>
+
+
+                <button name="action_modifyAvatar" class="btn btn-primary" type="submit" tabindex="3" >
+                    #i18n{portal.util.labelModify}
+                </button>
+            </div>
+
+        </fieldset>
+    </form>
+    </div>  
+
+</div>

@@ -38,6 +38,9 @@ import fr.paris.lutece.plugins.avatarserver.business.AvatarHome;
 import fr.paris.lutece.plugins.avatarserver.service.AvatarService;
 import fr.paris.lutece.portal.service.message.AdminMessage;
 import fr.paris.lutece.portal.service.message.AdminMessageService;
+import fr.paris.lutece.portal.service.security.LuteceUser;
+import fr.paris.lutece.portal.service.security.SecurityService;
+import fr.paris.lutece.portal.service.security.UserNotSignedException;
 import fr.paris.lutece.portal.service.util.AppPropertiesService;
 import fr.paris.lutece.portal.util.mvc.admin.annotations.Controller;
 import fr.paris.lutece.portal.util.mvc.commons.annotations.Action;
@@ -54,14 +57,14 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
-
 /**
  * This class provides the user interface to manage Avatar features ( manage,
  * create, modify, remove )
  */
-@Controller( controllerJsp = "ManageAvatars.jsp", controllerPath = "jsp/admin/plugins/avatarserver/", right = "AVATARSERVER_MANAGEMENT" )
+@Controller(controllerJsp = "ManageAvatars.jsp", controllerPath = "jsp/admin/plugins/avatarserver/", right = "AVATARSERVER_MANAGEMENT")
 public class AvatarJspBean extends ManageAvatarserverJspBean
 {
+
     ////////////////////////////////////////////////////////////////////////////
     // Constants
     // templates
@@ -87,6 +90,8 @@ public class AvatarJspBean extends ManageAvatarserverJspBean
     private static final String MESSAGE_CONFIRM_REMOVE_AVATAR = "avatarserver.message.confirmRemoveAvatar";
     private static final String PROPERTY_DEFAULT_LIST_AVATAR_PER_PAGE = "avatarserver.listAvatars.itemsPerPage";
     private static final String VALIDATION_ATTRIBUTES_PREFIX = "avatarserver.model.entity.avatar.attribute.";
+    
+    private static final String PROPERTY_URL_AFTER_UPDATE = "avatarserver.update_avatar.afterUpdateUrl";
 
     // Views
     private static final String VIEW_MANAGE_AVATARS = "manageAvatars";
@@ -109,32 +114,33 @@ public class AvatarJspBean extends ManageAvatarserverJspBean
 
     /**
      * Returns the Manage avatars page
+     *
      * @param request The HTTP request
      * @return The page
      */
-    @View( value = VIEW_MANAGE_AVATARS, defaultView = true )
-    public String getManageAvatars( HttpServletRequest request )
+    @View(value = VIEW_MANAGE_AVATARS, defaultView = true)
+    public String getManageAvatars(HttpServletRequest request)
     {
-        _strCurrentPageIndex = Paginator.getPageIndex( request, Paginator.PARAMETER_PAGE_INDEX, _strCurrentPageIndex );
-        _nDefaultItemsPerPage = AppPropertiesService.getPropertyInt( PROPERTY_DEFAULT_LIST_AVATAR_PER_PAGE, 50 );
-        _nItemsPerPage = Paginator.getItemsPerPage( request, Paginator.PARAMETER_ITEMS_PER_PAGE, _nItemsPerPage,
-                _nDefaultItemsPerPage );
+        _strCurrentPageIndex = Paginator.getPageIndex(request, Paginator.PARAMETER_PAGE_INDEX, _strCurrentPageIndex);
+        _nDefaultItemsPerPage = AppPropertiesService.getPropertyInt(PROPERTY_DEFAULT_LIST_AVATAR_PER_PAGE, 50);
+        _nItemsPerPage = Paginator.getItemsPerPage(request, Paginator.PARAMETER_ITEMS_PER_PAGE, _nItemsPerPage,
+                _nDefaultItemsPerPage);
 
-        UrlItem url = new UrlItem( JSP_MANAGE_AVATARS );
-        String strUrl = url.getUrl(  );
-        List<Avatar> listAvatars = (List<Avatar>) AvatarHome.getAvatarsList(  );
+        UrlItem url = new UrlItem(JSP_MANAGE_AVATARS);
+        String strUrl = url.getUrl();
+        List<Avatar> listAvatars = (List<Avatar>) AvatarHome.getAvatarsList();
 
         // PAGINATOR
-        LocalizedPaginator paginator = new LocalizedPaginator( listAvatars, _nItemsPerPage, strUrl,
-                PARAMETER_PAGE_INDEX, _strCurrentPageIndex, getLocale(  ) );
+        LocalizedPaginator paginator = new LocalizedPaginator(listAvatars, _nItemsPerPage, strUrl,
+                PARAMETER_PAGE_INDEX, _strCurrentPageIndex, getLocale());
 
-        Map<String, Object> model = getModel(  );
+        Map<String, Object> model = getModel();
 
-        model.put( MARK_NB_ITEMS_PER_PAGE, "" + _nItemsPerPage );
-        model.put( MARK_PAGINATOR, paginator );
-        model.put( MARK_AVATAR_LIST, paginator.getPageItems(  ) );
+        model.put(MARK_NB_ITEMS_PER_PAGE, "" + _nItemsPerPage);
+        model.put(MARK_PAGINATOR, paginator);
+        model.put(MARK_AVATAR_LIST, paginator.getPageItems());
 
-        return getPage( PROPERTY_PAGE_TITLE_MANAGE_AVATARS, TEMPLATE_MANAGE_AVATARS, model );
+        return getPage(PROPERTY_PAGE_TITLE_MANAGE_AVATARS, TEMPLATE_MANAGE_AVATARS, model);
     }
 
     /**
@@ -143,15 +149,15 @@ public class AvatarJspBean extends ManageAvatarserverJspBean
      * @param request The Http request
      * @return the html code of the avatar form
      */
-    @View( VIEW_CREATE_AVATAR )
-    public String getCreateAvatar( HttpServletRequest request )
+    @View(VIEW_CREATE_AVATAR)
+    public String getCreateAvatar(HttpServletRequest request)
     {
-        _avatar = ( _avatar != null ) ? _avatar : new Avatar(  );
+        _avatar = (_avatar != null) ? _avatar : new Avatar();
 
-        Map<String, Object> model = getModel(  );
-        model.put( MARK_AVATAR, _avatar );
+        Map<String, Object> model = getModel();
+        model.put(MARK_AVATAR, _avatar);
 
-        return getPage( PROPERTY_PAGE_TITLE_CREATE_AVATAR, TEMPLATE_CREATE_AVATAR, model );
+        return getPage(PROPERTY_PAGE_TITLE_CREATE_AVATAR, TEMPLATE_CREATE_AVATAR, model);
     }
 
     /**
@@ -160,28 +166,28 @@ public class AvatarJspBean extends ManageAvatarserverJspBean
      * @param request The Http Request
      * @return The Jsp URL of the process result
      */
-    @Action( ACTION_CREATE_AVATAR )
-    public String doCreateAvatar( HttpServletRequest request )
+    @Action(ACTION_CREATE_AVATAR)
+    public String doCreateAvatar(HttpServletRequest request)
     {
-        populate( _avatar, request );
+        populate(_avatar, request);
 
         MultipartHttpServletRequest multiPartRequest = (MultipartHttpServletRequest) request;
-        FileItem imageSource = multiPartRequest.getFile( PARAMETER_IMAGE );
+        FileItem imageSource = multiPartRequest.getFile(PARAMETER_IMAGE);
 
-        _avatar.setValue( imageSource.get(  ) );
-        _avatar.setMimeType( imageSource.getContentType(  ) );
+        _avatar.setValue(imageSource.get());
+        _avatar.setMimeType(imageSource.getContentType());
 
         // Check constraints
-        if ( !validateBean( _avatar, VALIDATION_ATTRIBUTES_PREFIX ) )
+        if (!validateBean(_avatar, VALIDATION_ATTRIBUTES_PREFIX))
         {
-            return redirectView( request, VIEW_CREATE_AVATAR );
+            return redirectView(request, VIEW_CREATE_AVATAR);
         }
 
-        AvatarService.create( _avatar );
+        AvatarService.create(_avatar);
         _avatar = null;
-        addInfo( INFO_AVATAR_CREATED, getLocale(  ) );
+        addInfo(INFO_AVATAR_CREATED, getLocale());
 
-        return redirectView( request, VIEW_MANAGE_AVATARS );
+        return redirectView(request, VIEW_MANAGE_AVATARS);
     }
 
     /**
@@ -191,17 +197,17 @@ public class AvatarJspBean extends ManageAvatarserverJspBean
      * @param request The Http request
      * @return the html code to confirm
      */
-    @Action( ACTION_CONFIRM_REMOVE_AVATAR )
-    public String getConfirmRemoveAvatar( HttpServletRequest request )
+    @Action(ACTION_CONFIRM_REMOVE_AVATAR)
+    public String getConfirmRemoveAvatar(HttpServletRequest request)
     {
-        int nId = Integer.parseInt( request.getParameter( PARAMETER_ID_AVATAR ) );
-        UrlItem url = new UrlItem( getActionUrl( ACTION_REMOVE_AVATAR ) );
-        url.addParameter( PARAMETER_ID_AVATAR, nId );
+        int nId = Integer.parseInt(request.getParameter(PARAMETER_ID_AVATAR));
+        UrlItem url = new UrlItem(getActionUrl(ACTION_REMOVE_AVATAR));
+        url.addParameter(PARAMETER_ID_AVATAR, nId);
 
-        String strMessageUrl = AdminMessageService.getMessageUrl( request, MESSAGE_CONFIRM_REMOVE_AVATAR,
-                url.getUrl(  ), AdminMessage.TYPE_CONFIRMATION );
+        String strMessageUrl = AdminMessageService.getMessageUrl(request, MESSAGE_CONFIRM_REMOVE_AVATAR,
+                url.getUrl(), AdminMessage.TYPE_CONFIRMATION);
 
-        return redirect( request, strMessageUrl );
+        return redirect(request, strMessageUrl);
     }
 
     /**
@@ -210,14 +216,14 @@ public class AvatarJspBean extends ManageAvatarserverJspBean
      * @param request The Http request
      * @return the jsp URL to display the form to manage avatars
      */
-    @Action( ACTION_REMOVE_AVATAR )
-    public String doRemoveAvatar( HttpServletRequest request )
+    @Action(ACTION_REMOVE_AVATAR)
+    public String doRemoveAvatar(HttpServletRequest request)
     {
-        int nId = Integer.parseInt( request.getParameter( PARAMETER_ID_AVATAR ) );
-        AvatarHome.remove( nId );
-        addInfo( INFO_AVATAR_REMOVED, getLocale(  ) );
+        int nId = Integer.parseInt(request.getParameter(PARAMETER_ID_AVATAR));
+        AvatarHome.remove(nId);
+        addInfo(INFO_AVATAR_REMOVED, getLocale());
 
-        return redirectView( request, VIEW_MANAGE_AVATARS );
+        return redirectView(request, VIEW_MANAGE_AVATARS);
     }
 
     /**
@@ -226,20 +232,20 @@ public class AvatarJspBean extends ManageAvatarserverJspBean
      * @param request The Http request
      * @return The HTML form to update info
      */
-    @View( VIEW_MODIFY_AVATAR )
-    public String getModifyAvatar( HttpServletRequest request )
+    @View(VIEW_MODIFY_AVATAR)
+    public String getModifyAvatar(HttpServletRequest request)
     {
-        int nId = Integer.parseInt( request.getParameter( PARAMETER_ID_AVATAR ) );
+        int nId = Integer.parseInt(request.getParameter(PARAMETER_ID_AVATAR));
 
-        if ( _avatar == null )
+        if (_avatar == null)
         {
-            _avatar = AvatarHome.findByPrimaryKey( nId );
+            _avatar = AvatarHome.findByPrimaryKey(nId);
         }
 
-        Map<String, Object> model = getModel(  );
-        model.put( MARK_AVATAR, _avatar );
+        Map<String, Object> model = getModel();
+        model.put(MARK_AVATAR, _avatar);
 
-        return getPage( PROPERTY_PAGE_TITLE_MODIFY_AVATAR, TEMPLATE_MODIFY_AVATAR, model );
+        return getPage(PROPERTY_PAGE_TITLE_MODIFY_AVATAR, TEMPLATE_MODIFY_AVATAR, model);
     }
 
     /**
@@ -248,27 +254,69 @@ public class AvatarJspBean extends ManageAvatarserverJspBean
      * @param request The Http request
      * @return The Jsp URL of the process result
      */
-    @Action( ACTION_MODIFY_AVATAR )
-    public String doModifyAvatar( HttpServletRequest request )
+    @Action(ACTION_MODIFY_AVATAR)
+    public String doModifyAvatar(HttpServletRequest request)
     {
-        populate( _avatar, request );
+        populate(_avatar, request);
 
         MultipartHttpServletRequest multiPartRequest = (MultipartHttpServletRequest) request;
-        FileItem imageSource = multiPartRequest.getFile( PARAMETER_IMAGE );
+        FileItem imageSource = multiPartRequest.getFile(PARAMETER_IMAGE);
 
-        _avatar.setValue( imageSource.get(  ) );
-        _avatar.setMimeType( imageSource.getContentType(  ) );
+        _avatar.setValue(imageSource.get());
+        _avatar.setMimeType(imageSource.getContentType());
 
         // Check constraints
-        if ( !validateBean( _avatar, VALIDATION_ATTRIBUTES_PREFIX ) )
+        if (!validateBean(_avatar, VALIDATION_ATTRIBUTES_PREFIX))
         {
-            return redirect( request, VIEW_MODIFY_AVATAR, PARAMETER_ID_AVATAR, _avatar.getId(  ) );
+            return redirect(request, VIEW_MODIFY_AVATAR, PARAMETER_ID_AVATAR, _avatar.getId());
         }
 
-        AvatarService.update( _avatar );
+        AvatarService.update(_avatar);
         _avatar = null;
-        addInfo( INFO_AVATAR_UPDATED, getLocale(  ) );
+        addInfo(INFO_AVATAR_UPDATED, getLocale());
 
-        return redirectView( request, VIEW_MANAGE_AVATARS );
+        return redirectView(request, VIEW_MANAGE_AVATARS);
     }
+
+    ////////////////////////////////////////////////////////////////////////////
+    // FRONT UPDATE
+    
+    
+    public String doUpdateAvatar(HttpServletRequest request) throws UserNotSignedException
+    {
+        LuteceUser user = SecurityService.getInstance().getRegisteredUser(request);
+
+        if (user != null)
+        {
+            String strAvatarId = request.getParameter(PARAMETER_ID_AVATAR);
+
+            MultipartHttpServletRequest multiPartRequest = (MultipartHttpServletRequest) request;
+            FileItem imageSource = multiPartRequest.getFile(PARAMETER_IMAGE);
+
+            boolean bUpdate = (strAvatarId != null);
+            if (bUpdate)
+            {
+                Avatar avatar = AvatarHome.findByPrimaryKey(Integer.parseInt(strAvatarId));
+                avatar.setValue(imageSource.get());
+                avatar.setMimeType(imageSource.getContentType());
+                AvatarService.update(avatar);
+            }
+            else
+            {
+                Avatar avatar = new Avatar();
+                avatar.setEmail( user.getEmail() );
+                avatar.setValue(imageSource.get());
+                avatar.setMimeType(imageSource.getContentType());
+                AvatarService.create(avatar);
+            }
+        }
+        else
+        {
+            throw new UserNotSignedException();
+        }
+        
+        String strAfterUpdateUrl = AppPropertiesService.getProperty( PROPERTY_URL_AFTER_UPDATE );
+        return strAfterUpdateUrl;
+    }
+
 }
