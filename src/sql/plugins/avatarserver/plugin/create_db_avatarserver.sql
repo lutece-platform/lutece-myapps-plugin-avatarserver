@@ -11,5 +11,6 @@ mime_type varchar(50) NOT NULL default '',
 file_value LONG VARBINARY,
 hash_email varchar(50) NOT NULL default '',
 PRIMARY KEY (id_avatar),
-KEY hash_email (hash_email)
+UNIQUE KEY hash_email (hash_email)
 );
+

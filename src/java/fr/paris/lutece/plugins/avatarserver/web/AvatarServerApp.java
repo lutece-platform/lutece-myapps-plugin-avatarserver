@@ -52,7 +52,7 @@ import javax.servlet.http.HttpServletRequest;
 /**
  * AvatarServer App
  */
-@Controller( xpageName = "avatarserver", pageTitleI18nKey = "avatarserver.xpage.pageTitle" )
+@Controller( xpageName = "avatarserver", pageTitleI18nKey = "avatarserver.xpage.pageTitle", pagePathI18nKey = "avatarserver.xpage.pagePath" )
 public class AvatarServerApp extends MVCApplication
 {
     private static final String TEMPLATE_AVATAR = "skin/plugins/avatarserver/update_avatar.html";
