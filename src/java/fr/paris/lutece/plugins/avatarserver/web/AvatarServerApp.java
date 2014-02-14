@@ -36,18 +36,22 @@ package fr.paris.lutece.plugins.avatarserver.web;
 
 import fr.paris.lutece.plugins.avatarserver.business.Avatar;
 import fr.paris.lutece.plugins.avatarserver.business.AvatarHome;
+import fr.paris.lutece.plugins.avatarserver.service.AvatarService;
 import fr.paris.lutece.plugins.avatarserver.service.HashService;
 import fr.paris.lutece.portal.service.security.LuteceUser;
 import fr.paris.lutece.portal.service.security.SecurityService;
 import fr.paris.lutece.portal.service.security.UserNotSignedException;
 import fr.paris.lutece.portal.service.util.AppPropertiesService;
+import fr.paris.lutece.portal.util.mvc.commons.annotations.Action;
 import fr.paris.lutece.portal.util.mvc.commons.annotations.View;
 import fr.paris.lutece.portal.util.mvc.xpage.MVCApplication;
 import fr.paris.lutece.portal.util.mvc.xpage.annotations.Controller;
+import fr.paris.lutece.portal.web.upload.MultipartHttpServletRequest;
 import fr.paris.lutece.portal.web.xpages.XPage;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
+import org.apache.commons.fileupload.FileItem;
 
 /**
  * AvatarServer App
@@ -56,16 +60,37 @@ import javax.servlet.http.HttpServletRequest;
 public class AvatarServerApp extends MVCApplication
 {
     private static final String TEMPLATE_AVATAR = "skin/plugins/avatarserver/update_avatar.html";
-    private static final String VIEW_HOME = "home";
+    
     private static final String MARK_AVATAR = "avatar";
     private static final String MARK_AVATAR_ID = "avatar_id";
     private static final String MARK_EMAIL = "email";
     private static final String MARK_BACK_URL = "url_back";
+
+    // Views and actions
+    private static final String VIEW_HOME = "home";
+    private static final String ACTION_UPDATE_AVATAR = "updateAvatar";
+
+    // Parameters
+    private static final String PARAMETER_ID_AVATAR = "id_avatar";
+    private static final String PARAMETER_IMAGE = "avatar_image";
+
+    private static final String PROPERTY_URL_AFTER_UPDATE = "avatarserver.update_avatar.afterUpdateUrl";
     private static final String PROPERTY_BACK_URL = "avatarserver.update_avatar.backUrl";
     
+    private static final String MESSAGE_MISSING_FILE = "avatarserver.xpage.message.missingFile";
+    
 
+    /**
+     * Update avatar view
+     * @param request The HTTP request
+     * @return The XPage
+     * @throws UserNotSignedException if the user is not signed
+     * @throws IllegalAccessException if an error occurs
+     * @throws IllegalArgumentException if an error occurs
+     * @throws InvocationTargetException if an error occurs
+     */
     @View( value = VIEW_HOME, defaultView = true )
-    public XPage getDashboards( HttpServletRequest request ) throws UserNotSignedException, IllegalAccessException, IllegalArgumentException, InvocationTargetException
+    public XPage getUpdateAvatar( HttpServletRequest request ) throws UserNotSignedException, IllegalAccessException, IllegalArgumentException, InvocationTargetException
     {
         LuteceUser user = SecurityService.isAuthenticationEnable( ) ? SecurityService.getInstance( )
                 .getRegisteredUser( request ) : null;
@@ -90,4 +115,55 @@ public class AvatarServerApp extends MVCApplication
         
         return getXPage( TEMPLATE_AVATAR, request.getLocale( ), model );
     }
+    
+    /**
+     * Do update avatar action
+     * @param request The HTTP request
+     * @return The next XPage
+     * @throws UserNotSignedException 
+     */
+    @Action( ACTION_UPDATE_AVATAR )
+    public XPage doUpdateAvatar(HttpServletRequest request) throws UserNotSignedException
+    {
+        LuteceUser user = SecurityService.getInstance().getRegisteredUser(request);
+
+        if (user != null)
+        {
+            String strAvatarId = request.getParameter(PARAMETER_ID_AVATAR);
+
+            MultipartHttpServletRequest multiPartRequest = (MultipartHttpServletRequest) request;
+            FileItem imageSource = multiPartRequest.getFile(PARAMETER_IMAGE);
+            
+            if( imageSource.getSize() == 0 )
+            {
+                addError( MESSAGE_MISSING_FILE , request.getLocale() );
+                return redirectView(request, VIEW_HOME );
+            }
+
+            boolean bUpdate = (strAvatarId != null);
+            if (bUpdate)
+            {
+                Avatar avatar = AvatarHome.findByPrimaryKey(Integer.parseInt(strAvatarId));
+                avatar.setValue(imageSource.get());
+                avatar.setMimeType(imageSource.getContentType());
+                AvatarService.update(avatar);
+            }
+            else
+            {
+                Avatar avatar = new Avatar();
+                avatar.setEmail( user.getEmail() );
+                avatar.setValue(imageSource.get());
+                avatar.setMimeType(imageSource.getContentType());
+                AvatarService.create(avatar);
+            }
+        }
+        else
+        {
+            throw new UserNotSignedException();
+        }
+        
+        String strAfterUpdateUrl = AppPropertiesService.getProperty( PROPERTY_URL_AFTER_UPDATE );
+        return redirect( request, strAfterUpdateUrl );
+    }
+
 }

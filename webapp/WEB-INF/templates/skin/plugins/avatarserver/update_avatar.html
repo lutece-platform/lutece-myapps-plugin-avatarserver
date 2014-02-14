@@ -22,7 +22,9 @@
     
     <div class="span7">
 
-    <form class="form-horizontal" method="post" action="jsp/site/plugins/avatarserver/DoUpdateAvatar.jsp" enctype="multipart/form-data">
+    <form class="form-horizontal" method="post" action="jsp/site/Portal.jsp" enctype="multipart/form-data">
+        <input type="hidden" name="page" value="avatarserver" />
+        <input type="hidden" name="action" value="updateAvatar" />
         <fieldset>
             <legend>#i18n{avatarserver.update_avatar.titleUpdateAvatar}</legend>
             <@messages errors=errors />

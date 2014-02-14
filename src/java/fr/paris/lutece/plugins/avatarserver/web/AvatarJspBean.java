@@ -38,9 +38,6 @@ import fr.paris.lutece.plugins.avatarserver.business.AvatarHome;
 import fr.paris.lutece.plugins.avatarserver.service.AvatarService;
 import fr.paris.lutece.portal.service.message.AdminMessage;
 import fr.paris.lutece.portal.service.message.AdminMessageService;
-import fr.paris.lutece.portal.service.security.LuteceUser;
-import fr.paris.lutece.portal.service.security.SecurityService;
-import fr.paris.lutece.portal.service.security.UserNotSignedException;
 import fr.paris.lutece.portal.service.util.AppPropertiesService;
 import fr.paris.lutece.portal.util.mvc.admin.annotations.Controller;
 import fr.paris.lutece.portal.util.mvc.commons.annotations.Action;
@@ -90,8 +87,6 @@ public class AvatarJspBean extends ManageAvatarserverJspBean
     private static final String MESSAGE_CONFIRM_REMOVE_AVATAR = "avatarserver.message.confirmRemoveAvatar";
     private static final String PROPERTY_DEFAULT_LIST_AVATAR_PER_PAGE = "avatarserver.listAvatars.itemsPerPage";
     private static final String VALIDATION_ATTRIBUTES_PREFIX = "avatarserver.model.entity.avatar.attribute.";
-    
-    private static final String PROPERTY_URL_AFTER_UPDATE = "avatarserver.update_avatar.afterUpdateUrl";
 
     // Views
     private static final String VIEW_MANAGE_AVATARS = "manageAvatars";
@@ -278,45 +273,5 @@ public class AvatarJspBean extends ManageAvatarserverJspBean
         return redirectView(request, VIEW_MANAGE_AVATARS);
     }
 
-    ////////////////////////////////////////////////////////////////////////////
-    // FRONT UPDATE
-    
-    
-    public String doUpdateAvatar(HttpServletRequest request) throws UserNotSignedException
-    {
-        LuteceUser user = SecurityService.getInstance().getRegisteredUser(request);
-
-        if (user != null)
-        {
-            String strAvatarId = request.getParameter(PARAMETER_ID_AVATAR);
-
-            MultipartHttpServletRequest multiPartRequest = (MultipartHttpServletRequest) request;
-            FileItem imageSource = multiPartRequest.getFile(PARAMETER_IMAGE);
-
-            boolean bUpdate = (strAvatarId != null);
-            if (bUpdate)
-            {
-                Avatar avatar = AvatarHome.findByPrimaryKey(Integer.parseInt(strAvatarId));
-                avatar.setValue(imageSource.get());
-                avatar.setMimeType(imageSource.getContentType());
-                AvatarService.update(avatar);
-            }
-            else
-            {
-                Avatar avatar = new Avatar();
-                avatar.setEmail( user.getEmail() );
-                avatar.setValue(imageSource.get());
-                avatar.setMimeType(imageSource.getContentType());
-                AvatarService.create(avatar);
-            }
-        }
-        else
-        {
-            throw new UserNotSignedException();
-        }
-        
-        String strAfterUpdateUrl = AppPropertiesService.getProperty( PROPERTY_URL_AFTER_UPDATE );
-        return strAfterUpdateUrl;
-    }
 
 }
