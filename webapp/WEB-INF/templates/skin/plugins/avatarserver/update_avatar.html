@@ -30,15 +30,15 @@
                 <input type="hidden" id="id_avatar" name="id_avatar" value="${avatar.id}"/>
                 </#if>   
                 <div class="form-group">
-                    <label class="control-label" for="avatar_email" >#i18n{avatarserver.update_avatar.labelAvatarEmail}  :</label>
-                    <div>
+                    <label class="col-sm-4 control-label" for="avatar_email" >#i18n{avatarserver.update_avatar.labelAvatarEmail}  :</label>
+                    <div class="col-sm-8" >
                         ${email}
                     </div>
                 </div>
                 <div class="form-group">
-                    <label class="control-label" for="avatar_image" >#i18n{avatarserver.update_avatar.labelAvatarImage} * :</label>
-                    <div>
-                        <input type="file" class="form-control" id="avatar_image" name="avatar_image" tabindex="2" />
+                    <label class="col-sm-4 control-label" for="avatar_image" >#i18n{avatarserver.update_avatar.labelAvatarImage} * :</label>
+                    <div class="col-sm-8">
+                        <input type="file" class="" id="avatar_image" name="avatar_image" tabindex="2" />
                         <span class="help-block">#i18n{avatarserver.update_avatar.labelAvatarImage.help}</span>
                     </div>
                 </div>
