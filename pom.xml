@@ -15,6 +15,14 @@
 
     <repositories>
         <repository>
+            <id>luteceSnapshot</id>
+            <name>luteceSnapshot</name>
+            <url>http://dev.lutece.paris.fr/snapshot_repository</url>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </repository>
+        <repository>
             <id>lutece</id>
             <name>luteceRepository</name>
             <url>http://dev.lutece.paris.fr/maven_repository</url>
@@ -49,7 +57,7 @@
         <jiraComponentId>12295</jiraComponentId>
     </properties>
 	
-	    <scm>
+    <scm>
         <connection>scm:svn:http://dev.lutece.paris.fr/svn/lutece/portal/trunk/plugins/extends/plugin-avatarserver</connection>
         <developerConnection>scm:svn:https://dev.lutece.paris.fr/svn/lutece/portal/trunk/plugins/extends/plugin-avatarserver</developerConnection>
         <url>http://dev.lutece.paris.fr/viewvc/lutece/portal/trunk/plugins/extends/plugin-avatarserver</url>
