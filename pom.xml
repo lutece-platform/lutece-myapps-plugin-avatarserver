@@ -58,9 +58,9 @@
     </properties>
 	
     <scm>
-        <connection>scm:svn:http://dev.lutece.paris.fr/svn/lutece/portal/trunk/plugins/extends/plugin-avatarserver</connection>
-        <developerConnection>scm:svn:https://dev.lutece.paris.fr/svn/lutece/portal/trunk/plugins/extends/plugin-avatarserver</developerConnection>
-        <url>http://dev.lutece.paris.fr/viewvc/lutece/portal/trunk/plugins/extends/plugin-avatarserver</url>
+        <connection>scm:git:https://github.com/lutece-platform/lutece-myapps-plugin-avatarserver.git</connection>
+        <developerConnection>scm:git:https://github.com/lutece-platform/lutece-myapps-plugin-avatarserver.git</developerConnection>
+        <url>https://github.com/lutece-platform/lutece-myapps-plugin-avatarserver.git</url>
     </scm>
 
 </project>
