@@ -42,9 +42,8 @@ avatarserver.avatar.size=100
             </subsection>
             <subsection name="Usage">
                 <p>
-                    L'accès à l'image de l'avatar se fait par l'url suivante où 
-                    la valeur HASH est le condensat MD5 de l'email de l'utilisateur
-                    à afficher.
+                    The URL to access to the image is presented below where HASH
+                    is a MD5 hash of the user's email.
                 </p>
                 <div class="source">
                     <pre>http://avatar.mydomain.com/[context]/rest/avatarserver/HASH
