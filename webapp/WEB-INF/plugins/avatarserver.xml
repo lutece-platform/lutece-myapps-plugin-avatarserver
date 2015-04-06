@@ -10,7 +10,7 @@
     <provider>avatarserver.plugin.provider</provider>
     <provider-url>http://fr.lutece.paris.fr</provider-url>
     <icon-url>images/admin/skin/plugins/avatarserver/avatarserver.png</icon-url>
-    <copyright>Copyright (c) 2014 Mairie de Paris</copyright>
+    <copyright>Copyright (c) 2015 Mairie de Paris</copyright>
     <db-pool-required>1</db-pool-required>
     
     <!-- Admin features parameters -->
@@ -33,6 +33,15 @@
             <application-class>fr.paris.lutece.plugins.avatarserver.web.AvatarServerApp</application-class>
         </application>
     </applications>
+    
+    <!-- servlets -->
+     <servlets>
+          <servlet>
+               <servlet-name>avatarserverPost</servlet-name>
+               <url-pattern>/servlet/plugins/avatarserver/post</url-pattern>
+               <servlet-class>fr.paris.lutece.plugins.avatarserver.web.PostAvatarServlet</servlet-class>
+          </servlet>
+     </servlets>
     
 
 </plug-in>
