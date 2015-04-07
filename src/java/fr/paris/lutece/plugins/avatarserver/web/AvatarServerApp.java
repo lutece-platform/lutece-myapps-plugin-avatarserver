@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2014, Mairie de Paris
+ * Copyright (c) 2002-2015, Mairie de Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -124,7 +124,7 @@ public class AvatarServerApp extends MVCApplication
      * Do update avatar action
      * @param request The HTTP request
      * @return The next XPage
-     * @throws UserNotSignedException
+     * @throws UserNotSignedException if the user is not signed
      */
     @Action( ACTION_UPDATE_AVATAR )
     public XPage doUpdateAvatar( HttpServletRequest request )

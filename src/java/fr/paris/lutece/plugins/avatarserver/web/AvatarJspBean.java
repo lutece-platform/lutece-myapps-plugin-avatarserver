@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2014, Mairie de Paris
+ * Copyright (c) 2002-2015, Mairie de Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -85,7 +85,6 @@ public class AvatarJspBean extends ManageAvatarserverJspBean
 
     // Properties
     private static final String MESSAGE_CONFIRM_REMOVE_AVATAR = "avatarserver.message.confirmRemoveAvatar";
-    private static final String PROPERTY_DEFAULT_LIST_AVATAR_PER_PAGE = "avatarserver.listAvatars.itemsPerPage";
     private static final String VALIDATION_ATTRIBUTES_PREFIX = "avatarserver.model.entity.avatar.attribute.";
 
     // Views
@@ -116,24 +115,8 @@ public class AvatarJspBean extends ManageAvatarserverJspBean
     @View( value = VIEW_MANAGE_AVATARS, defaultView = true )
     public String getManageAvatars( HttpServletRequest request )
     {
-        _strCurrentPageIndex = Paginator.getPageIndex( request, Paginator.PARAMETER_PAGE_INDEX, _strCurrentPageIndex );
-        _nDefaultItemsPerPage = AppPropertiesService.getPropertyInt( PROPERTY_DEFAULT_LIST_AVATAR_PER_PAGE, 50 );
-        _nItemsPerPage = Paginator.getItemsPerPage( request, Paginator.PARAMETER_ITEMS_PER_PAGE, _nItemsPerPage,
-                _nDefaultItemsPerPage );
-
-        UrlItem url = new UrlItem( JSP_MANAGE_AVATARS );
-        String strUrl = url.getUrl(  );
         List<Avatar> listAvatars = (List<Avatar>) AvatarHome.getAvatarsList(  );
-
-        // PAGINATOR
-        LocalizedPaginator paginator = new LocalizedPaginator( listAvatars, _nItemsPerPage, strUrl,
-                PARAMETER_PAGE_INDEX, _strCurrentPageIndex, getLocale(  ) );
-
-        Map<String, Object> model = getModel(  );
-
-        model.put( MARK_NB_ITEMS_PER_PAGE, "" + _nItemsPerPage );
-        model.put( MARK_PAGINATOR, paginator );
-        model.put( MARK_AVATAR_LIST, paginator.getPageItems(  ) );
+        Map<String, Object> model = getPaginatedListModel( request, MARK_AVATAR_LIST, listAvatars, JSP_MANAGE_AVATARS );
 
         return getPage( PROPERTY_PAGE_TITLE_MANAGE_AVATARS, TEMPLATE_MANAGE_AVATARS, model );
     }
