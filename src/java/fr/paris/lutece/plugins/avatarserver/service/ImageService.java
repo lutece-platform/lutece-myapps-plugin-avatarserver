@@ -38,6 +38,7 @@ import fr.paris.lutece.portal.service.util.AppLogService;
 import org.imgscalr.Scalr;
 
 import java.awt.image.BufferedImage;
+import java.awt.Color;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -73,6 +74,15 @@ public final class ImageService
             ByteArrayInputStream in = new ByteArrayInputStream( byteArray );
             ByteArrayOutputStream out = new ByteArrayOutputStream(  );
             BufferedImage image = ImageIO.read( in );
+
+            //Replace transparent background with white and drop alpha channel
+            //Otherwise, the rest of the code would swap channels and this would lead to a red tint on images
+            if ( image.getColorModel(  ).hasAlpha(  ) ) {
+                BufferedImage newImage = new BufferedImage( image.getWidth(  ), image.getHeight(  ), BufferedImage.TYPE_INT_RGB);
+                newImage.createGraphics(  ).drawImage( image, 0, 0, Color.WHITE, null );
+                image = newImage;
+            }
+
             BufferedImage resizedImage;
             resizedImage = Scalr.resize( image, Scalr.Mode.FIT_TO_WIDTH, width );
             ImageIO.write( resizedImage, PARAMETER_JPG, out );
