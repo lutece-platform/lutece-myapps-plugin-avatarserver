@@ -15,6 +15,11 @@ The configuration must include:
 * the default image's url to return when there is no avatar in the database corresponding to the requested email.
 * size in which the images will be stored.
 
+The configuration may additionally include:
+
+
+* quality between 0.0 (lowest) and 1.0 (highest) in which the images will be stored.
+
 ```
 # avatarserver properties file
 
@@ -23,6 +28,7 @@ avatarserver.default.avatar.url=../../images/local/skin/plugins/avatarserver/ava
 
 # Storage size
 avatarserver.avatar.size=100
+avatarserver.avatar.quality=0.9
                     
 ```
 

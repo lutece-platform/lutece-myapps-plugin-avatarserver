@@ -29,6 +29,14 @@
                          size in which the images will be stored.
                      </li>
                  </ul>
+                <p>
+                     The configuration may additionally include:
+                 </p>
+                 <ul>
+                     <li>
+                         quality between 0.0 (lowest) and 1.0 (highest) in which the images will be stored.
+                     </li>
+                 </ul>
                  <div class="source">
                     <pre># avatarserver properties file
 
@@ -37,6 +45,7 @@ avatarserver.default.avatar.url=../../images/local/skin/plugins/avatarserver/ava
 
 # Storage size
 avatarserver.avatar.size=100
+avatarserver.avatar.quality=0.9
                     </pre>
                 </div>
             </subsection>
