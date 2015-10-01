@@ -44,7 +44,11 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
+import javax.imageio.IIOImage;
 import javax.imageio.ImageIO;
+import javax.imageio.ImageWriteParam;
+import javax.imageio.ImageWriter;
+import javax.imageio.stream.MemoryCacheImageOutputStream;
 
 
 /**
@@ -61,12 +65,23 @@ public final class ImageService
     }
 
     /**
-     * Resize an image
-     * @param byteArray the original byte arrau
+     * Resize an image with the default quality
+     * @param byteArray the original byte array
      * @param width the new width
      * @return the resize byte array
      */
-    public static byte[] resizeImage( byte[] byteArray, int width )
+    public static byte[] resizeImage( byte[] byteArray, int width ) {
+        return resizeImage( byteArray, width, AvatarService.getQuality(  ) );
+    }
+
+    /**
+     * Resize an image
+     * @param byteArray the original byte array
+     * @param width the new width
+     * @param quality the quality between 0.0 and 1.0
+     * @return the resize byte array
+     */
+    public static byte[] resizeImage( byte[] byteArray, int width, float quality )
     {
         try
         {
@@ -78,14 +93,24 @@ public final class ImageService
             //Replace transparent background with white and drop alpha channel
             //Otherwise, the rest of the code would swap channels and this would lead to a red tint on images
             if ( image.getColorModel(  ).hasAlpha(  ) ) {
-                BufferedImage newImage = new BufferedImage( image.getWidth(  ), image.getHeight(  ), BufferedImage.TYPE_INT_RGB);
+                BufferedImage newImage = new BufferedImage( image.getWidth(  ), image.getHeight(  ), BufferedImage.TYPE_INT_RGB );
                 newImage.createGraphics(  ).drawImage( image, 0, 0, Color.WHITE, null );
                 image = newImage;
             }
 
             BufferedImage resizedImage;
             resizedImage = Scalr.resize( image, Scalr.Mode.FIT_TO_WIDTH, width );
-            ImageIO.write( resizedImage, PARAMETER_JPG, out );
+
+            //Boilerplate to be able to set the quality
+            ImageWriter jpgWriter = ImageIO.getImageWritersByFormatName( PARAMETER_JPG ).next(  );
+            ImageWriteParam jpgWriteParam = jpgWriter.getDefaultWriteParam(  );
+            jpgWriteParam.setCompressionMode( ImageWriteParam.MODE_EXPLICIT );
+            jpgWriteParam.setCompressionQuality( quality );
+            jpgWriter.setOutput( new MemoryCacheImageOutputStream( out ) );
+            IIOImage outputImage = new IIOImage( resizedImage, null, null );
+            jpgWriter.write( null, outputImage, jpgWriteParam );
+            jpgWriter.dispose(  );
+            out.flush(  );
 
             return out.toByteArray(  );
         }

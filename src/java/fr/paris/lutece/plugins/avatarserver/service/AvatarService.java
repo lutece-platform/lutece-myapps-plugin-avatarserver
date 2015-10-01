@@ -44,7 +44,9 @@ import fr.paris.lutece.portal.service.util.AppPropertiesService;
 public final class AvatarService
 {
     private static final String PROPERTY_SIZE = "avatarserver.avatar.size";
+    private static final String PROPERTY_QUALITY = "avatarserver.avatar.quality";
     private static final int DEFAULT_SIZE = 100;
+    private static final String DEFAULT_QUALITY = "0.9";
 
     /** Private constructor */
     private AvatarService(  )
@@ -59,7 +61,7 @@ public final class AvatarService
     public static Avatar create( Avatar avatar )
     {
         avatar.setHash( HashService.getHash( avatar.getEmail(  ) ) );
-        avatar.setValue( ImageService.resizeImage( avatar.getValue(  ), getSize(  ) ) );
+        avatar.setValue( ImageService.resizeImage( avatar.getValue(  ), getSize(  ), getQuality(  ) ) );
 
         return AvatarHome.create( avatar );
     }
@@ -72,7 +74,7 @@ public final class AvatarService
     public static Avatar update( Avatar avatar )
     {
         avatar.setHash( HashService.getHash( avatar.getEmail(  ) ) );
-        avatar.setValue( ImageService.resizeImage( avatar.getValue(  ), getSize(  ) ) );
+        avatar.setValue( ImageService.resizeImage( avatar.getValue(  ), getSize(  ), getQuality(  ) ) );
 
         return AvatarHome.update( avatar );
     }
@@ -84,5 +86,14 @@ public final class AvatarService
     private static int getSize(  )
     {
         return AppPropertiesService.getPropertyInt( PROPERTY_SIZE, DEFAULT_SIZE );
+    }
+
+    /**
+     * Get the avatar quality
+     * @return The quality
+     */
+    public static float getQuality(  )
+    {
+        return Float.parseFloat( AppPropertiesService.getProperty( PROPERTY_QUALITY, DEFAULT_QUALITY ) );
     }
 }
