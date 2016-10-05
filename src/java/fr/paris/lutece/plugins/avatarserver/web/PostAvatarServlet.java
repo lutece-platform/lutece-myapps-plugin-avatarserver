@@ -9,6 +9,8 @@ import fr.paris.lutece.plugins.avatarserver.business.Avatar;
 import fr.paris.lutece.plugins.avatarserver.business.AvatarHome;
 import fr.paris.lutece.plugins.avatarserver.service.AvatarService;
 import fr.paris.lutece.plugins.avatarserver.service.HashService;
+import fr.paris.lutece.portal.service.security.LuteceUser;
+import fr.paris.lutece.portal.service.security.SecurityService;
 import fr.paris.lutece.portal.service.util.AppLogService;
 import fr.paris.lutece.portal.web.upload.MultipartHttpServletRequest;
 import fr.paris.lutece.util.http.MultipartUtil;
@@ -32,7 +34,6 @@ import javax.servlet.http.HttpServletResponse;
 public class PostAvatarServlet extends HttpServlet
 {
     private static final String PARAMETER_IMAGE = "image";
-    private static final String PARAMETER_EMAIL = "email";
     private static final String PARAMETER_RETURN_URL = "return_url";
     private static int _nRequestSizeMax = 200000;
     private static int _nSizeThreshold = -1;
@@ -58,34 +59,42 @@ public class PostAvatarServlet extends HttpServlet
             MultipartHttpServletRequest multiPartRequest = MultipartUtil.convert( _nSizeThreshold, _nRequestSizeMax,
                     true, request );
             FileItem imageSource = multiPartRequest.getFile( PARAMETER_IMAGE );
-            String strEmail = multiPartRequest.getParameter( PARAMETER_EMAIL );
-            String strHash = HashService.getHash( strEmail );
             String strReturnUrl = multiPartRequest.getParameter( PARAMETER_RETURN_URL );
 
-            Avatar avatar = AvatarHome.findByHash( strHash );
-            boolean bCreate = false;
-
-            if ( avatar == null )
+ 
+            LuteceUser user = SecurityService.getInstance().getRegisteredUser( request );
+            if( user != null )
             {
-                avatar = new Avatar(  );
-                bCreate = true;
-            }
+                String strEmail = user.getEmail();
+                String strHash = HashService.getHash( strEmail );
+                Avatar avatar = AvatarHome.findByHash( strHash );
+                boolean bCreate = false;
 
-            avatar.setEmail( strEmail );
-            avatar.setHash( strHash );
-            avatar.setValue( imageSource.get(  ) );
-            avatar.setMimeType( imageSource.getContentType(  ) );
+                if ( avatar == null )
+                {
+                    avatar = new Avatar(  );
+                    bCreate = true;
+                }
+                avatar.setEmail( strEmail );
+                avatar.setHash( strHash );
+                avatar.setValue( imageSource.get(  ) );
+                avatar.setMimeType( imageSource.getContentType(  ) );
 
-            if ( bCreate )
-            {
-                AvatarService.create( avatar );
+                if ( bCreate )
+                {
+                    AvatarService.create( avatar );
+                }
+                else
+                {
+                    AvatarService.update( avatar );
+                }
+
+                out.println( "Avatar successfully posted!" );
             }
             else
             {
-                AvatarService.update( avatar );
+                out.println( "No user connected!" );
             }
-
-            out.println( "Avatar successfully posted!" );
             response.sendRedirect( strReturnUrl );
         }
         catch ( FileUploadException ex )
