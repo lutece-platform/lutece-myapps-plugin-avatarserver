@@ -39,6 +39,7 @@ import fr.paris.lutece.plugins.avatarserver.service.AvatarService;
 import fr.paris.lutece.plugins.avatarserver.service.HashService;
 import fr.paris.lutece.portal.service.security.LuteceUser;
 import fr.paris.lutece.portal.service.security.SecurityService;
+import fr.paris.lutece.portal.service.security.UserNotSignedException;
 import fr.paris.lutece.portal.service.util.AppLogService;
 import fr.paris.lutece.portal.web.upload.MultipartHttpServletRequest;
 import fr.paris.lutece.util.http.MultipartUtil;
@@ -55,8 +56,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
- * PostAvatar Servlet
- *
+ * PostAvatar Servlet.
+ * This servlet let upload an avatar for the current connected user
  */
 public class PostAvatarServlet extends HttpServlet
 {
@@ -65,6 +66,9 @@ public class PostAvatarServlet extends HttpServlet
     private static int _nRequestSizeMax = 200000;
     private static int _nSizeThreshold = -1;
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     protected void doGet( HttpServletRequest req, HttpServletResponse resp ) throws ServletException, IOException
     {
@@ -74,6 +78,9 @@ public class PostAvatarServlet extends HttpServlet
         out.close( );
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     protected void doPost( HttpServletRequest request, HttpServletResponse response ) throws ServletException, IOException
     {
@@ -85,7 +92,7 @@ public class PostAvatarServlet extends HttpServlet
             FileItem imageSource = multiPartRequest.getFile( PARAMETER_IMAGE );
             String strReturnUrl = multiPartRequest.getParameter( PARAMETER_RETURN_URL );
 
-            LuteceUser user = SecurityService.getInstance( ).getRegisteredUser( request );
+            LuteceUser user = SecurityService.getInstance( ).getRemoteUser( request );
             if ( user != null )
             {
                 String strEmail = user.getEmail( );
@@ -113,17 +120,28 @@ public class PostAvatarServlet extends HttpServlet
                 }
 
                 out.println( "Avatar successfully posted!" );
+                if( strReturnUrl != null )
+                {
+                    response.sendRedirect( strReturnUrl );
+                }
             }
             else
             {
                 out.println( "No user connected!" );
+                response.sendError( HttpServletResponse.SC_UNAUTHORIZED );
             }
-            response.sendRedirect( strReturnUrl );
         }
         catch( FileUploadException ex )
         {
             out.println( "Error uploading avatar : " + ex.getMessage( ) );
             AppLogService.error( "Error uploading avatar : " + ex.getMessage( ), ex );
+            response.sendError( HttpServletResponse.SC_BAD_REQUEST );
+        }
+        catch( UserNotSignedException ex )
+        {
+            out.println( "Error uploading avatar : " + ex.getMessage( ) );
+            AppLogService.error( "Error uploading avatar : " + ex.getMessage( ), ex );
+            response.sendError( HttpServletResponse.SC_UNAUTHORIZED );
         }
         finally
         {
