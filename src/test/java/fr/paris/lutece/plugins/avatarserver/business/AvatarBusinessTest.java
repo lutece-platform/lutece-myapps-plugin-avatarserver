@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2015, Mairie de Paris
+ * Copyright (c) 2002-2016, Mairie de Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -35,7 +35,6 @@ package fr.paris.lutece.plugins.avatarserver.business;
 
 import fr.paris.lutece.test.LuteceTestCase;
 
-
 public class AvatarBusinessTest extends LuteceTestCase
 {
     private final static int IDAVATAR1 = 1;
@@ -45,38 +44,38 @@ public class AvatarBusinessTest extends LuteceTestCase
     private final static String AVATARIMAGE1 = "AvatarImage1";
     private final static String AVATARIMAGE2 = "AvatarImage2";
 
-    public void testBusiness(  )
+    public void testBusiness( )
     {
         // Initialize an object
-        Avatar avatar = new Avatar(  );
+        Avatar avatar = new Avatar( );
         avatar.setId( IDAVATAR1 );
         avatar.setEmail( EMAIL1 );
-        avatar.setValue( AVATARIMAGE1.getBytes(  ) );
+        avatar.setValue( AVATARIMAGE1.getBytes( ) );
 
         // Create test
         AvatarHome.create( avatar );
 
-        Avatar avatarStored = AvatarHome.findByPrimaryKey( avatar.getId(  ) );
-        assertEquals( avatarStored.getId(  ), avatar.getId(  ) );
-        assertEquals( avatarStored.getEmail(  ), avatar.getEmail(  ) );
-        assertEquals( avatarStored.getValue(  ), avatar.getValue(  ) );
+        Avatar avatarStored = AvatarHome.findByPrimaryKey( avatar.getId( ) );
+        assertEquals( avatarStored.getId( ), avatar.getId( ) );
+        assertEquals( avatarStored.getEmail( ), avatar.getEmail( ) );
+        assertEquals( avatarStored.getValue( ), avatar.getValue( ) );
 
         // Update test
         avatar.setId( IDAVATAR2 );
         avatar.setEmail( EMAIL2 );
-        avatar.setValue( AVATARIMAGE2.getBytes(  ) );
+        avatar.setValue( AVATARIMAGE2.getBytes( ) );
         AvatarHome.update( avatar );
-        avatarStored = AvatarHome.findByPrimaryKey( avatar.getId(  ) );
-        assertEquals( avatarStored.getId(  ), avatar.getId(  ) );
-        assertEquals( avatarStored.getEmail(  ), avatar.getEmail(  ) );
-        assertEquals( avatarStored.getValue(  ), avatar.getValue(  ) );
+        avatarStored = AvatarHome.findByPrimaryKey( avatar.getId( ) );
+        assertEquals( avatarStored.getId( ), avatar.getId( ) );
+        assertEquals( avatarStored.getEmail( ), avatar.getEmail( ) );
+        assertEquals( avatarStored.getValue( ), avatar.getValue( ) );
 
         // List test
-        AvatarHome.getAvatarsList(  );
+        AvatarHome.getAvatarsList( );
 
         // Delete test
-        AvatarHome.remove( avatar.getId(  ) );
-        avatarStored = AvatarHome.findByPrimaryKey( avatar.getId(  ) );
+        AvatarHome.remove( avatar.getId( ) );
+        avatarStored = AvatarHome.findByPrimaryKey( avatar.getId( ) );
         assertNull( avatarStored );
     }
 }

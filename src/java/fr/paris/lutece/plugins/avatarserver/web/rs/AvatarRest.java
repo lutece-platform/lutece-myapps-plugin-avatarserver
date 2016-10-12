@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2015, Mairie de Paris
+ * Copyright (c) 2002-2016, Mairie de Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -52,7 +52,6 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.HttpHeaders;
 
-
 /**
  *
  * @author martinlo
@@ -69,15 +68,17 @@ public class AvatarRest
 
     /**
      * Return the avatar for a given hash
-     * @param strHash The hash
+     * 
+     * @param strHash
+     *            The hash
      * @return The avatar's image
-     * @throws IOException if an error occurs
+     * @throws IOException
+     *             if an error occurs
      */
     @GET
     @Path( "/{hash}" )
     @Produces( "image/*" )
-    public String getAvatar( @PathParam( "hash" )
-    String strHash ) throws IOException
+    public String getAvatar( @PathParam( "hash" ) String strHash ) throws IOException
     {
         _logger.debug( "Avatar requested for hash = " + strHash );
 
@@ -86,12 +87,12 @@ public class AvatarRest
         if ( avatar != null )
         {
             _response.setContentType( "images/jpg" );
-            _response.setHeader( "Content-Type", avatar.getMimeType(  ) );
+            _response.setHeader( "Content-Type", avatar.getMimeType( ) );
             _response.setHeader( "Content-Disposition", "inline; filename=\"" + "avatar" + "\"" );
 
-            OutputStream out = _response.getOutputStream(  );
-            out.write( avatar.getValue(  ) );
-            out.close(  );
+            OutputStream out = _response.getOutputStream( );
+            out.write( avatar.getValue( ) );
+            out.close( );
         }
         else
         {

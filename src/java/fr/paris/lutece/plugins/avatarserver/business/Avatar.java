@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2015, Mairie de Paris
+ * Copyright (c) 2002-2016, Mairie de Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -38,21 +38,20 @@ import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.validation.constraints.Size;
 
-
 /**
  * This is the business class for the object Avatar
  */
 public class Avatar
 {
-    // Variables declarations 
-    private byte[] _byValue;
+    // Variables declarations
+    private byte [ ] _byValue;
     private String _strMimeType;
     private String _strHash;
     private int _nIdAvatar;
 
     // @NotEmpty( message = "#i18n{avatarserver.validation.avatar.Email.notEmpty}" )
     @NotEmpty( message = "#i18n{portal.validation.message.notEmpty}" )
-    // @Size( max = 255 , message = "#i18n{avatarserver.validation.avatar.Email.size}" ) 
+    // @Size( max = 255 , message = "#i18n{avatarserver.validation.avatar.Email.size}" )
     @Size( max = 255, message = "#i18n{portal.validation.message.sizeMax}" )
     @Email( message = "#i18n{portal.validation.message.email}" )
     private String _strEmail;
@@ -62,7 +61,7 @@ public class Avatar
      *
      * @return The IdAvatar
      */
-    public int getId(  )
+    public int getId( )
     {
         return _nIdAvatar;
     }
@@ -70,7 +69,8 @@ public class Avatar
     /**
      * Sets the IdAvatar
      *
-     * @param nIdAvatar The IdAvatar
+     * @param nIdAvatar
+     *            The IdAvatar
      */
     public void setId( int nIdAvatar )
     {
@@ -82,7 +82,7 @@ public class Avatar
      *
      * @return The Email
      */
-    public String getEmail(  )
+    public String getEmail( )
     {
         return _strEmail;
     }
@@ -90,7 +90,8 @@ public class Avatar
     /**
      * Sets the Email
      *
-     * @param strEmail The Email
+     * @param strEmail
+     *            The Email
      */
     public void setEmail( String strEmail )
     {
@@ -102,7 +103,7 @@ public class Avatar
      *
      * @return the icon file value
      */
-    public byte[] getValue(  )
+    public byte [ ] getValue( )
     {
         return _byValue;
     }
@@ -110,9 +111,10 @@ public class Avatar
     /**
      * set the icon file value
      *
-     * @param value the file value
+     * @param value
+     *            the file value
      */
-    public void setValue( byte[] value )
+    public void setValue( byte [ ] value )
     {
         _byValue = value;
     }
@@ -122,7 +124,7 @@ public class Avatar
      *
      * @return the icon mime type
      */
-    public String getMimeType(  )
+    public String getMimeType( )
     {
         return _strMimeType;
     }
@@ -130,7 +132,8 @@ public class Avatar
     /**
      * set the icon mime type
      *
-     * @param mimeType the icon mime type
+     * @param mimeType
+     *            the icon mime type
      */
     public void setMimeType( String mimeType )
     {
@@ -138,11 +141,11 @@ public class Avatar
     }
 
     /**
-    * the hash
-    *
-    * @return the hash
-    */
-    public String getHash(  )
+     * the hash
+     *
+     * @return the hash
+     */
+    public String getHash( )
     {
         return _strHash;
     }
@@ -150,7 +153,8 @@ public class Avatar
     /**
      * set the hash
      *
-     * @param hash the hash
+     * @param hash
+     *            the hash
      */
     public void setHash( String hash )
     {

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2015, Mairie de Paris
+ * Copyright (c) 2002-2016, Mairie de Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -37,7 +37,6 @@ import fr.paris.lutece.portal.service.plugin.Plugin;
 
 import java.util.Collection;
 
-
 /**
  * IAvatarDAO Interface
  */
@@ -45,47 +44,64 @@ public interface IAvatarDAO
 {
     /**
      * Insert a new record in the table.
-     * @param avatar instance of the Avatar object to insert
-     * @param plugin the Plugin
+     * 
+     * @param avatar
+     *            instance of the Avatar object to insert
+     * @param plugin
+     *            the Plugin
      */
     void insert( Avatar avatar, Plugin plugin );
 
     /**
      * Update the record in the table
-     * @param avatar the reference of the Avatar
-     * @param plugin the Plugin
+     * 
+     * @param avatar
+     *            the reference of the Avatar
+     * @param plugin
+     *            the Plugin
      */
     void store( Avatar avatar, Plugin plugin );
 
     /**
      * Delete a record from the table
-     * @param nIdAvatar int identifier of the Avatar to delete
-     * @param plugin the Plugin
+     * 
+     * @param nIdAvatar
+     *            int identifier of the Avatar to delete
+     * @param plugin
+     *            the Plugin
      */
     void delete( int nIdAvatar, Plugin plugin );
 
-    ///////////////////////////////////////////////////////////////////////////
+    // /////////////////////////////////////////////////////////////////////////
     // Finders
 
     /**
      * Load the data from the table
-     * @param nKey The identifier of the avatar
-     * @param plugin the Plugin
+     * 
+     * @param nKey
+     *            The identifier of the avatar
+     * @param plugin
+     *            the Plugin
      * @return The instance of the avatar
      */
     Avatar load( int nKey, Plugin plugin );
 
     /**
      * Load the data of all the avatar objects and returns them as a collection
-     * @param plugin the Plugin
+     * 
+     * @param plugin
+     *            the Plugin
      * @return The collection which contains the data of all the avatar objects
      */
     Collection<Avatar> selectAvatarsList( Plugin plugin );
 
     /**
      * Find avatar by its hash
-     * @param strHash The hash
-     * @param plugin The plugin
+     * 
+     * @param strHash
+     *            The hash
+     * @param plugin
+     *            The plugin
      * @return The avatar
      */
     Avatar selectByHash( String strHash, Plugin plugin );

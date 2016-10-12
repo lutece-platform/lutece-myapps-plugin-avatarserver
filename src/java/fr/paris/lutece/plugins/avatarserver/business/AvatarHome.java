@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2015, Mairie de Paris
+ * Copyright (c) 2002-2016, Mairie de Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -39,7 +39,6 @@ import fr.paris.lutece.portal.service.spring.SpringContextService;
 
 import java.util.Collection;
 
-
 /**
  * This class provides instances management methods (create, find, ...) for Avatar objects
  */
@@ -52,13 +51,15 @@ public final class AvatarHome
     /**
      * Private constructor - this class need not be instantiated
      */
-    private AvatarHome(  )
+    private AvatarHome( )
     {
     }
 
     /**
      * Returns an instance of a avatar whose identifier is specified in parameter
-     * @param strHash The avatar hash created with the email address
+     * 
+     * @param strHash
+     *            The avatar hash created with the email address
      * @return an instance of Avatar
      */
     public static Avatar findByHash( String strHash )
@@ -68,8 +69,10 @@ public final class AvatarHome
 
     /**
      * Create an instance of the avatar class
-     * @param avatar The instance of the Avatar which contains the informations to store
-     * @return The  instance of avatar which has been created with its primary key.
+     * 
+     * @param avatar
+     *            The instance of the Avatar which contains the informations to store
+     * @return The instance of avatar which has been created with its primary key.
      */
     public static Avatar create( Avatar avatar )
     {
@@ -80,8 +83,10 @@ public final class AvatarHome
 
     /**
      * Update of the avatar which is specified in parameter
-     * @param avatar The instance of the Avatar which contains the data to store
-     * @return The instance of the  avatar which has been updated
+     * 
+     * @param avatar
+     *            The instance of the Avatar which contains the data to store
+     * @return The instance of the avatar which has been updated
      */
     public static Avatar update( Avatar avatar )
     {
@@ -92,19 +97,23 @@ public final class AvatarHome
 
     /**
      * Remove the avatar whose identifier is specified in parameter
-     * @param nAvatarId The avatar Id
+     * 
+     * @param nAvatarId
+     *            The avatar Id
      */
     public static void remove( int nAvatarId )
     {
         _dao.delete( nAvatarId, _plugin );
     }
 
-    ///////////////////////////////////////////////////////////////////////////
+    // /////////////////////////////////////////////////////////////////////////
     // Finders
 
     /**
      * Returns an instance of a avatar whose identifier is specified in parameter
-     * @param nKey The avatar primary key
+     * 
+     * @param nKey
+     *            The avatar primary key
      * @return an instance of Avatar
      */
     public static Avatar findByPrimaryKey( int nKey )
@@ -114,9 +123,10 @@ public final class AvatarHome
 
     /**
      * Load the data of all the avatar objects and returns them in form of a collection
+     * 
      * @return the collection which contains the data of all the avatar objects
      */
-    public static Collection<Avatar> getAvatarsList(  )
+    public static Collection<Avatar> getAvatarsList( )
     {
         return _dao.selectAvatarsList( _plugin );
     }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2015, Mairie de Paris
+ * Copyright (c) 2002-2016, Mairie de Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -41,7 +41,6 @@ import fr.paris.lutece.portal.service.image.ImageResourceProvider;
 import fr.paris.lutece.portal.web.constants.Parameters;
 import fr.paris.lutece.util.url.UrlItem;
 
-
 /**
  * Service for Url entry types. Provide ImageResource managemenent
  *
@@ -49,20 +48,20 @@ import fr.paris.lutece.util.url.UrlItem;
 public class AvatarResourceProvider implements ImageResourceProvider
 {
     private static final String PLUGIN_NAME = "avatarserver";
-    private static AvatarResourceProvider _singleton = new AvatarResourceProvider(  );
+    private static AvatarResourceProvider _singleton = new AvatarResourceProvider( );
     private static final String IMAGE_RESOURCE_TYPE_ID = "avatar_img";
 
     /**
      * Creates a new instance of AvatarResourceProvider
      */
-    AvatarResourceProvider(  )
+    AvatarResourceProvider( )
     {
     }
 
     /**
      * Initializes the service
      */
-    public void register(  )
+    public void register( )
     {
         ImageResourceManager.registerProvider( this );
     }
@@ -72,16 +71,18 @@ public class AvatarResourceProvider implements ImageResourceProvider
      *
      * @return The unique instance
      */
-    public static AvatarResourceProvider getInstance(  )
+    public static AvatarResourceProvider getInstance( )
     {
         return _singleton;
     }
 
     /**
-    * Return the Resource id
-    * @param nIdResource The resource identifier
-    * @return The Resource Image
-    */
+     * Return the Resource id
+     * 
+     * @param nIdResource
+     *            The resource identifier
+     * @return The Resource Image
+     */
     @Override
     public ImageResource getImageResource( int nIdResource )
     {
@@ -89,9 +90,9 @@ public class AvatarResourceProvider implements ImageResourceProvider
 
         if ( avatar != null )
         {
-            ImageResource imageResource = new ImageResource(  );
-            imageResource.setImage( avatar.getValue(  ) );
-            imageResource.setMimeType( avatar.getMimeType(  ) );
+            ImageResource imageResource = new ImageResource( );
+            imageResource.setImage( avatar.getValue( ) );
+            imageResource.setMimeType( avatar.getMimeType( ) );
 
             return imageResource;
         }
@@ -101,26 +102,29 @@ public class AvatarResourceProvider implements ImageResourceProvider
 
     /**
      * Return the Resource Type id
+     * 
      * @return The Resource Type Id
      */
     @Override
-    public String getResourceTypeId(  )
+    public String getResourceTypeId( )
     {
         return IMAGE_RESOURCE_TYPE_ID;
     }
 
     /**
      * Management of the image associated to the {@link EntryUrl}
-     * @param nEntryUrl The {@link EntryUrl} identifier
+     * 
+     * @param nEntryUrl
+     *            The {@link EntryUrl} identifier
      * @return The url of the resource
      */
     public static String getResourceImageEntryUrl( int nEntryUrl )
     {
-        String strResourceType = AvatarResourceProvider.getInstance(  ).getResourceTypeId(  );
+        String strResourceType = AvatarResourceProvider.getInstance( ).getResourceTypeId( );
         UrlItem url = new UrlItem( Parameters.IMAGE_SERVLET );
         url.addParameter( Parameters.RESOURCE_TYPE, strResourceType );
         url.addParameter( Parameters.RESOURCE_ID, Integer.toString( nEntryUrl ) );
 
-        return url.getUrlWithEntity(  );
+        return url.getUrlWithEntity( );
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2015, Mairie de Paris
+ * Copyright (c) 2002-2016, Mairie de Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -38,7 +38,6 @@ import fr.paris.lutece.portal.service.util.AppLogService;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
-
 /**
  * Hash Service
  *
@@ -46,37 +45,39 @@ import java.security.NoSuchAlgorithmException;
 public final class HashService
 {
     /** Private constructor */
-    private HashService(  )
+    private HashService( )
     {
     }
 
     /**
      * Calculate the Hash corresponding to the given email
-     * @param strAvatarEmail The Email
+     * 
+     * @param strAvatarEmail
+     *            The Email
      * @return The Hash
      */
     public static String getHash( String strAvatarEmail )
     {
-        String strEmail = strAvatarEmail.toLowerCase(  );
+        String strEmail = strAvatarEmail.toLowerCase( );
         MessageDigest md;
 
         try
         {
             md = MessageDigest.getInstance( "MD5" );
 
-            byte[] hash = md.digest( strEmail.getBytes(  ) );
-            StringBuilder sb = new StringBuilder(  );
+            byte [ ] hash = md.digest( strEmail.getBytes( ) );
+            StringBuilder sb = new StringBuilder( );
 
             for ( int i = 0; i < hash.length; i++ )
             {
-                sb.append( Integer.toString( ( hash[i] & 0xff ) + 0x100, 16 ).substring( 1 ) );
+                sb.append( Integer.toString( ( hash [i] & 0xff ) + 0x100, 16 ).substring( 1 ) );
             }
 
-            return sb.toString(  );
+            return sb.toString( );
         }
-        catch ( NoSuchAlgorithmException ex )
+        catch( NoSuchAlgorithmException ex )
         {
-            AppLogService.error( "Error getting gravatar : " + ex.getMessage(  ), ex );
+            AppLogService.error( "Error getting gravatar : " + ex.getMessage( ), ex );
         }
 
         return "";

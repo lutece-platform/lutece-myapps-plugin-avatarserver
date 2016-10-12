@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2015, Mairie de Paris
+ * Copyright (c) 2002-2016, Mairie de Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -50,7 +50,6 @@ import javax.imageio.ImageWriteParam;
 import javax.imageio.ImageWriter;
 import javax.imageio.stream.MemoryCacheImageOutputStream;
 
-
 /**
  * Image Service
  */
@@ -60,63 +59,72 @@ public final class ImageService
     private static final String PARAMETER_JPG = "jpg";
 
     /** Private constructor */
-    private ImageService(  )
+    private ImageService( )
     {
     }
 
     /**
      * Resize an image with the default quality
-     * @param byteArray the original byte array
-     * @param width the new width
+     * 
+     * @param byteArray
+     *            the original byte array
+     * @param width
+     *            the new width
      * @return the resize byte array
      */
-    public static byte[] resizeImage( byte[] byteArray, int width ) {
-        return resizeImage( byteArray, width, AvatarService.getQuality(  ) );
+    public static byte [ ] resizeImage( byte [ ] byteArray, int width )
+    {
+        return resizeImage( byteArray, width, AvatarService.getQuality( ) );
     }
 
     /**
      * Resize an image
-     * @param byteArray the original byte array
-     * @param width the new width
-     * @param quality the quality between 0.0 and 1.0
+     * 
+     * @param byteArray
+     *            the original byte array
+     * @param width
+     *            the new width
+     * @param quality
+     *            the quality between 0.0 and 1.0
      * @return the resize byte array
      */
-    public static byte[] resizeImage( byte[] byteArray, int width, float quality )
+    public static byte [ ] resizeImage( byte [ ] byteArray, int width, float quality )
     {
         try
         {
             // Crop image if needed
             ByteArrayInputStream in = new ByteArrayInputStream( byteArray );
-            ByteArrayOutputStream out = new ByteArrayOutputStream(  );
+            ByteArrayOutputStream out = new ByteArrayOutputStream( );
             BufferedImage image = ImageIO.read( in );
 
-            //Replace transparent background with white and drop alpha channel
-            //Otherwise, the rest of the code would swap channels and this would lead to a red tint on images
-            if ( image.getColorModel(  ).hasAlpha(  ) ) {
-                BufferedImage newImage = new BufferedImage( image.getWidth(  ), image.getHeight(  ), BufferedImage.TYPE_INT_RGB );
-                newImage.createGraphics(  ).drawImage( image, 0, 0, Color.WHITE, null );
+            // Replace transparent background with white and drop alpha channel
+            // Otherwise, the rest of the code would swap channels and this would lead to a red tint on images
+            if ( image.getColorModel( ).hasAlpha( ) )
+            {
+                BufferedImage newImage = new BufferedImage( image.getWidth( ), image.getHeight( ), BufferedImage.TYPE_INT_RGB );
+                newImage.createGraphics( ).drawImage( image, 0, 0, Color.WHITE, null );
                 image = newImage;
             }
 
             BufferedImage resizedImage;
             resizedImage = Scalr.resize( image, Scalr.Mode.FIT_TO_WIDTH, width );
 
-            //Boilerplate to be able to set the quality
-            ImageWriter jpgWriter = ImageIO.getImageWritersByFormatName( PARAMETER_JPG ).next(  );
-            ImageWriteParam jpgWriteParam = jpgWriter.getDefaultWriteParam(  );
+            // Boilerplate to be able to set the quality
+            ImageWriter jpgWriter = ImageIO.getImageWritersByFormatName( PARAMETER_JPG ).next( );
+            ImageWriteParam jpgWriteParam = jpgWriter.getDefaultWriteParam( );
             jpgWriteParam.setCompressionMode( ImageWriteParam.MODE_EXPLICIT );
             jpgWriteParam.setCompressionQuality( quality );
             jpgWriter.setOutput( new MemoryCacheImageOutputStream( out ) );
             IIOImage outputImage = new IIOImage( resizedImage, null, null );
             jpgWriter.write( null, outputImage, jpgWriteParam );
-            jpgWriter.dispose(  );
-            out.flush(  );
+            jpgWriter.dispose( );
+            out.flush( );
 
-            return out.toByteArray(  );
+            return out.toByteArray( );
         }
-        catch ( IOException ex )
+        catch( IOException ex )
         {
-            AppLogService.error( "Avatar - Image Service - Error resizing image : " + ex.getMessage(  ), ex );
+            AppLogService.error( "Avatar - Image Service - Error resizing image : " + ex.getMessage( ), ex );
         }
 
         return byteArray;

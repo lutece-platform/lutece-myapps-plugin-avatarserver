@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2015, Mairie de Paris
+ * Copyright (c) 2002-2016, Mairie de Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -56,7 +56,6 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
-
 /**
  * AvatarServer App
  */
@@ -82,55 +81,62 @@ public class AvatarServerApp extends MVCApplication
 
     /**
      * Update avatar view
-     * @param request The HTTP request
+     * 
+     * @param request
+     *            The HTTP request
      * @return The XPage
-     * @throws UserNotSignedException if the user is not signed
-     * @throws IllegalAccessException if an error occurs
-     * @throws IllegalArgumentException if an error occurs
-     * @throws InvocationTargetException if an error occurs
+     * @throws UserNotSignedException
+     *             if the user is not signed
+     * @throws IllegalAccessException
+     *             if an error occurs
+     * @throws IllegalArgumentException
+     *             if an error occurs
+     * @throws InvocationTargetException
+     *             if an error occurs
      */
     @View( value = VIEW_HOME, defaultView = true )
-    public XPage getUpdateAvatar( HttpServletRequest request )
-        throws UserNotSignedException, IllegalAccessException, IllegalArgumentException, InvocationTargetException
+    public XPage getUpdateAvatar( HttpServletRequest request ) throws UserNotSignedException, IllegalAccessException, IllegalArgumentException,
+            InvocationTargetException
     {
-        LuteceUser user = SecurityService.isAuthenticationEnable(  )
-            ? SecurityService.getInstance(  ).getRegisteredUser( request ) : null;
+        LuteceUser user = SecurityService.isAuthenticationEnable( ) ? SecurityService.getInstance( ).getRegisteredUser( request ) : null;
 
         if ( user == null )
         {
-            throw new UserNotSignedException(  );
+            throw new UserNotSignedException( );
         }
 
-        String strEmail = user.getEmail(  );
+        String strEmail = user.getEmail( );
         String strHash = HashService.getHash( strEmail );
         Avatar avatar = AvatarHome.findByHash( strHash );
         String strBackUrl = AppPropertiesService.getProperty( PROPERTY_BACK_URL );
 
-        Map<String, Object> model = getModel(  );
+        Map<String, Object> model = getModel( );
 
         if ( avatar != null )
         {
-            model.put( MARK_AVATAR_ID, avatar.getId(  ) );
+            model.put( MARK_AVATAR_ID, avatar.getId( ) );
         }
 
         model.put( MARK_AVATAR, avatar );
         model.put( MARK_EMAIL, strEmail );
         model.put( MARK_BACK_URL, strBackUrl );
 
-        return getXPage( TEMPLATE_AVATAR, request.getLocale(  ), model );
+        return getXPage( TEMPLATE_AVATAR, request.getLocale( ), model );
     }
 
     /**
      * Do update avatar action
-     * @param request The HTTP request
+     * 
+     * @param request
+     *            The HTTP request
      * @return The next XPage
-     * @throws UserNotSignedException if the user is not signed
+     * @throws UserNotSignedException
+     *             if the user is not signed
      */
     @Action( ACTION_UPDATE_AVATAR )
-    public XPage doUpdateAvatar( HttpServletRequest request )
-        throws UserNotSignedException
+    public XPage doUpdateAvatar( HttpServletRequest request ) throws UserNotSignedException
     {
-        LuteceUser user = SecurityService.getInstance(  ).getRegisteredUser( request );
+        LuteceUser user = SecurityService.getInstance( ).getRegisteredUser( request );
 
         if ( user != null )
         {
@@ -139,9 +145,9 @@ public class AvatarServerApp extends MVCApplication
             MultipartHttpServletRequest multiPartRequest = (MultipartHttpServletRequest) request;
             FileItem imageSource = multiPartRequest.getFile( PARAMETER_IMAGE );
 
-            if ( imageSource.getSize(  ) == 0 )
+            if ( imageSource.getSize( ) == 0 )
             {
-                addError( MESSAGE_MISSING_FILE, request.getLocale(  ) );
+                addError( MESSAGE_MISSING_FILE, request.getLocale( ) );
 
                 return redirectView( request, VIEW_HOME );
             }
@@ -151,22 +157,22 @@ public class AvatarServerApp extends MVCApplication
             if ( bUpdate )
             {
                 Avatar avatar = AvatarHome.findByPrimaryKey( Integer.parseInt( strAvatarId ) );
-                avatar.setValue( imageSource.get(  ) );
-                avatar.setMimeType( imageSource.getContentType(  ) );
+                avatar.setValue( imageSource.get( ) );
+                avatar.setMimeType( imageSource.getContentType( ) );
                 AvatarService.update( avatar );
             }
             else
             {
-                Avatar avatar = new Avatar(  );
-                avatar.setEmail( user.getEmail(  ) );
-                avatar.setValue( imageSource.get(  ) );
-                avatar.setMimeType( imageSource.getContentType(  ) );
+                Avatar avatar = new Avatar( );
+                avatar.setEmail( user.getEmail( ) );
+                avatar.setValue( imageSource.get( ) );
+                avatar.setMimeType( imageSource.getContentType( ) );
                 AvatarService.create( avatar );
             }
         }
         else
         {
-            throw new UserNotSignedException(  );
+            throw new UserNotSignedException( );
         }
 
         String strAfterUpdateUrl = AppPropertiesService.getProperty( PROPERTY_URL_AFTER_UPDATE );

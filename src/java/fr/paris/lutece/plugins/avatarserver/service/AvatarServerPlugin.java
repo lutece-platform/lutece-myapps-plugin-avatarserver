@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2015, Mairie de Paris
+ * Copyright (c) 2002-2016, Mairie de Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -35,7 +35,6 @@ package fr.paris.lutece.plugins.avatarserver.service;
 
 import fr.paris.lutece.portal.service.plugin.PluginDefaultImplementation;
 
-
 /**
  *
  * class AppStorePlugin
@@ -49,8 +48,8 @@ public class AvatarServerPlugin extends PluginDefaultImplementation
      * Initialize the AppStorePlugin
      */
     @Override
-    public void init(  )
+    public void init( )
     {
-        AvatarResourceProvider.getInstance(  ).register(  );
+        AvatarResourceProvider.getInstance( ).register( );
     }
 }

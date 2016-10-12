@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2015, Mairie de Paris
+ * Copyright (c) 2002-2016, Mairie de Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -37,7 +37,6 @@ import fr.paris.lutece.plugins.avatarserver.business.Avatar;
 import fr.paris.lutece.plugins.avatarserver.business.AvatarHome;
 import fr.paris.lutece.portal.service.util.AppPropertiesService;
 
-
 /**
  * Avatar Service
  */
@@ -49,50 +48,56 @@ public final class AvatarService
     private static final String DEFAULT_QUALITY = "0.9";
 
     /** Private constructor */
-    private AvatarService(  )
+    private AvatarService( )
     {
     }
 
     /**
      * Create an instance of the avatar class
-     * @param avatar The instance of the Avatar which contains the informations to store
-     * @return The  instance of avatar which has been created with its primary key.
+     * 
+     * @param avatar
+     *            The instance of the Avatar which contains the informations to store
+     * @return The instance of avatar which has been created with its primary key.
      */
     public static Avatar create( Avatar avatar )
     {
-        avatar.setHash( HashService.getHash( avatar.getEmail(  ) ) );
-        avatar.setValue( ImageService.resizeImage( avatar.getValue(  ), getSize(  ), getQuality(  ) ) );
+        avatar.setHash( HashService.getHash( avatar.getEmail( ) ) );
+        avatar.setValue( ImageService.resizeImage( avatar.getValue( ), getSize( ), getQuality( ) ) );
 
         return AvatarHome.create( avatar );
     }
 
     /**
      * Update an instance of the avatar class
-     * @param avatar The instance of the Avatar which contains the informations to store
-     * @return The  instance of avatar which has been created with its primary key.
+     * 
+     * @param avatar
+     *            The instance of the Avatar which contains the informations to store
+     * @return The instance of avatar which has been created with its primary key.
      */
     public static Avatar update( Avatar avatar )
     {
-        avatar.setHash( HashService.getHash( avatar.getEmail(  ) ) );
-        avatar.setValue( ImageService.resizeImage( avatar.getValue(  ), getSize(  ), getQuality(  ) ) );
+        avatar.setHash( HashService.getHash( avatar.getEmail( ) ) );
+        avatar.setValue( ImageService.resizeImage( avatar.getValue( ), getSize( ), getQuality( ) ) );
 
         return AvatarHome.update( avatar );
     }
 
     /**
      * Get the avatar size
+     * 
      * @return The size
      */
-    private static int getSize(  )
+    private static int getSize( )
     {
         return AppPropertiesService.getPropertyInt( PROPERTY_SIZE, DEFAULT_SIZE );
     }
 
     /**
      * Get the avatar quality
+     * 
      * @return The quality
      */
-    public static float getQuality(  )
+    public static float getQuality( )
     {
         return Float.parseFloat( AppPropertiesService.getProperty( PROPERTY_QUALITY, DEFAULT_QUALITY ) );
     }

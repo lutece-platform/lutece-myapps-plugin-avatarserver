@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2015, Mairie de Paris
+ * Copyright (c) 2002-2016, Mairie de Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -54,15 +54,13 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
-
 /**
- * This class provides the user interface to manage Avatar features ( manage,
- * create, modify, remove )
+ * This class provides the user interface to manage Avatar features ( manage, create, modify, remove )
  */
 @Controller( controllerJsp = "ManageAvatars.jsp", controllerPath = "jsp/admin/plugins/avatarserver/", right = "AVATARSERVER_MANAGEMENT" )
 public class AvatarJspBean extends ManageAvatarserverJspBean
 {
-    ////////////////////////////////////////////////////////////////////////////
+    // //////////////////////////////////////////////////////////////////////////
     // Constants
     // templates
     private static final String TEMPLATE_MANAGE_AVATARS = "/admin/plugins/avatarserver/manage_avatars.html";
@@ -109,13 +107,14 @@ public class AvatarJspBean extends ManageAvatarserverJspBean
     /**
      * Returns the Manage avatars page
      *
-     * @param request The HTTP request
+     * @param request
+     *            The HTTP request
      * @return The page
      */
     @View( value = VIEW_MANAGE_AVATARS, defaultView = true )
     public String getManageAvatars( HttpServletRequest request )
     {
-        List<Avatar> listAvatars = (List<Avatar>) AvatarHome.getAvatarsList(  );
+        List<Avatar> listAvatars = (List<Avatar>) AvatarHome.getAvatarsList( );
         Map<String, Object> model = getPaginatedListModel( request, MARK_AVATAR_LIST, listAvatars, JSP_MANAGE_AVATARS );
 
         return getPage( PROPERTY_PAGE_TITLE_MANAGE_AVATARS, TEMPLATE_MANAGE_AVATARS, model );
@@ -124,15 +123,16 @@ public class AvatarJspBean extends ManageAvatarserverJspBean
     /**
      * Returns the form to create a avatar
      *
-     * @param request The Http request
+     * @param request
+     *            The Http request
      * @return the html code of the avatar form
      */
     @View( VIEW_CREATE_AVATAR )
     public String getCreateAvatar( HttpServletRequest request )
     {
-        _avatar = ( _avatar != null ) ? _avatar : new Avatar(  );
+        _avatar = ( _avatar != null ) ? _avatar : new Avatar( );
 
-        Map<String, Object> model = getModel(  );
+        Map<String, Object> model = getModel( );
         model.put( MARK_AVATAR, _avatar );
 
         return getPage( PROPERTY_PAGE_TITLE_CREATE_AVATAR, TEMPLATE_CREATE_AVATAR, model );
@@ -141,7 +141,8 @@ public class AvatarJspBean extends ManageAvatarserverJspBean
     /**
      * Process the data capture form of a new avatar
      *
-     * @param request The Http Request
+     * @param request
+     *            The Http Request
      * @return The Jsp URL of the process result
      */
     @Action( ACTION_CREATE_AVATAR )
@@ -152,8 +153,8 @@ public class AvatarJspBean extends ManageAvatarserverJspBean
         MultipartHttpServletRequest multiPartRequest = (MultipartHttpServletRequest) request;
         FileItem imageSource = multiPartRequest.getFile( PARAMETER_IMAGE );
 
-        _avatar.setValue( imageSource.get(  ) );
-        _avatar.setMimeType( imageSource.getContentType(  ) );
+        _avatar.setValue( imageSource.get( ) );
+        _avatar.setMimeType( imageSource.getContentType( ) );
 
         // Check constraints
         if ( !validateBean( _avatar, VALIDATION_ATTRIBUTES_PREFIX ) )
@@ -163,16 +164,16 @@ public class AvatarJspBean extends ManageAvatarserverJspBean
 
         AvatarService.create( _avatar );
         _avatar = null;
-        addInfo( INFO_AVATAR_CREATED, getLocale(  ) );
+        addInfo( INFO_AVATAR_CREATED, getLocale( ) );
 
         return redirectView( request, VIEW_MANAGE_AVATARS );
     }
 
     /**
-     * Manages the removal form of a avatar whose identifier is in the http
-     * request
+     * Manages the removal form of a avatar whose identifier is in the http request
      *
-     * @param request The Http request
+     * @param request
+     *            The Http request
      * @return the html code to confirm
      */
     @Action( ACTION_CONFIRM_REMOVE_AVATAR )
@@ -182,8 +183,7 @@ public class AvatarJspBean extends ManageAvatarserverJspBean
         UrlItem url = new UrlItem( getActionUrl( ACTION_REMOVE_AVATAR ) );
         url.addParameter( PARAMETER_ID_AVATAR, nId );
 
-        String strMessageUrl = AdminMessageService.getMessageUrl( request, MESSAGE_CONFIRM_REMOVE_AVATAR,
-                url.getUrl(  ), AdminMessage.TYPE_CONFIRMATION );
+        String strMessageUrl = AdminMessageService.getMessageUrl( request, MESSAGE_CONFIRM_REMOVE_AVATAR, url.getUrl( ), AdminMessage.TYPE_CONFIRMATION );
 
         return redirect( request, strMessageUrl );
     }
@@ -191,7 +191,8 @@ public class AvatarJspBean extends ManageAvatarserverJspBean
     /**
      * Handles the removal form of a avatar
      *
-     * @param request The Http request
+     * @param request
+     *            The Http request
      * @return the jsp URL to display the form to manage avatars
      */
     @Action( ACTION_REMOVE_AVATAR )
@@ -199,7 +200,7 @@ public class AvatarJspBean extends ManageAvatarserverJspBean
     {
         int nId = Integer.parseInt( request.getParameter( PARAMETER_ID_AVATAR ) );
         AvatarHome.remove( nId );
-        addInfo( INFO_AVATAR_REMOVED, getLocale(  ) );
+        addInfo( INFO_AVATAR_REMOVED, getLocale( ) );
 
         return redirectView( request, VIEW_MANAGE_AVATARS );
     }
@@ -207,7 +208,8 @@ public class AvatarJspBean extends ManageAvatarserverJspBean
     /**
      * Returns the form to update info about a avatar
      *
-     * @param request The Http request
+     * @param request
+     *            The Http request
      * @return The HTML form to update info
      */
     @View( VIEW_MODIFY_AVATAR )
@@ -220,7 +222,7 @@ public class AvatarJspBean extends ManageAvatarserverJspBean
             _avatar = AvatarHome.findByPrimaryKey( nId );
         }
 
-        Map<String, Object> model = getModel(  );
+        Map<String, Object> model = getModel( );
         model.put( MARK_AVATAR, _avatar );
 
         return getPage( PROPERTY_PAGE_TITLE_MODIFY_AVATAR, TEMPLATE_MODIFY_AVATAR, model );
@@ -229,7 +231,8 @@ public class AvatarJspBean extends ManageAvatarserverJspBean
     /**
      * Process the change form of a avatar
      *
-     * @param request The Http request
+     * @param request
+     *            The Http request
      * @return The Jsp URL of the process result
      */
     @Action( ACTION_MODIFY_AVATAR )
@@ -240,18 +243,18 @@ public class AvatarJspBean extends ManageAvatarserverJspBean
         MultipartHttpServletRequest multiPartRequest = (MultipartHttpServletRequest) request;
         FileItem imageSource = multiPartRequest.getFile( PARAMETER_IMAGE );
 
-        _avatar.setValue( imageSource.get(  ) );
-        _avatar.setMimeType( imageSource.getContentType(  ) );
+        _avatar.setValue( imageSource.get( ) );
+        _avatar.setMimeType( imageSource.getContentType( ) );
 
         // Check constraints
         if ( !validateBean( _avatar, VALIDATION_ATTRIBUTES_PREFIX ) )
         {
-            return redirect( request, VIEW_MODIFY_AVATAR, PARAMETER_ID_AVATAR, _avatar.getId(  ) );
+            return redirect( request, VIEW_MODIFY_AVATAR, PARAMETER_ID_AVATAR, _avatar.getId( ) );
         }
 
         AvatarService.update( _avatar );
         _avatar = null;
-        addInfo( INFO_AVATAR_UPDATED, getLocale(  ) );
+        addInfo( INFO_AVATAR_UPDATED, getLocale( ) );
 
         return redirectView( request, VIEW_MANAGE_AVATARS );
     }
