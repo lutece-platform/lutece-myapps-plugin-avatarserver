@@ -33,14 +33,19 @@
  */
 package fr.paris.lutece.plugins.avatarserver.business;
 
+import java.util.Arrays;
+
 import fr.paris.lutece.test.LuteceTestCase;
 
 public class AvatarBusinessTest extends LuteceTestCase
 {
-    private final static int IDAVATAR1 = 1;
-    private final static int IDAVATAR2 = 2;
+    private final static int IDAVATAR = 1;
     private final static String EMAIL1 = "Email1";
     private final static String EMAIL2 = "Email2";
+    private final static String MIME1 = "image/png";
+    private final static String MIME2 = "image/jpg";
+    private final static String HASH1 = "1234";
+    private final static String HASH2 = "567890";
     private final static String AVATARIMAGE1 = "AvatarImage1";
     private final static String AVATARIMAGE2 = "AvatarImage2";
 
@@ -48,8 +53,10 @@ public class AvatarBusinessTest extends LuteceTestCase
     {
         // Initialize an object
         Avatar avatar = new Avatar( );
-        avatar.setId( IDAVATAR1 );
+        avatar.setId( IDAVATAR );
         avatar.setEmail( EMAIL1 );
+        avatar.setMimeType( MIME1 );
+        avatar.setHash( HASH1 );
         avatar.setValue( AVATARIMAGE1.getBytes( ) );
 
         // Create test
@@ -58,17 +65,23 @@ public class AvatarBusinessTest extends LuteceTestCase
         Avatar avatarStored = AvatarHome.findByPrimaryKey( avatar.getId( ) );
         assertEquals( avatarStored.getId( ), avatar.getId( ) );
         assertEquals( avatarStored.getEmail( ), avatar.getEmail( ) );
-        assertEquals( avatarStored.getValue( ), avatar.getValue( ) );
+        assertEquals( avatarStored.getMimeType( ), avatar.getMimeType( ) );
+        assertEquals( avatarStored.getHash( ), avatar.getHash( ) );
+        assertTrue( Arrays.equals( avatarStored.getValue( ), avatar.getValue( ) ) );
 
         // Update test
-        avatar.setId( IDAVATAR2 );
+        avatar.setId( IDAVATAR );
         avatar.setEmail( EMAIL2 );
+        avatar.setMimeType( MIME2 );
+        avatar.setHash( HASH2 );
         avatar.setValue( AVATARIMAGE2.getBytes( ) );
         AvatarHome.update( avatar );
         avatarStored = AvatarHome.findByPrimaryKey( avatar.getId( ) );
         assertEquals( avatarStored.getId( ), avatar.getId( ) );
         assertEquals( avatarStored.getEmail( ), avatar.getEmail( ) );
-        assertEquals( avatarStored.getValue( ), avatar.getValue( ) );
+        assertEquals( avatarStored.getMimeType( ), avatar.getMimeType( ) );
+        assertEquals( avatarStored.getHash( ), avatar.getHash( ) );
+        assertTrue( Arrays.equals( avatarStored.getValue( ), avatar.getValue( ) ) );
 
         // List test
         AvatarHome.getAvatarsList( );
