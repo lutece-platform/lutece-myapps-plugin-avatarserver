@@ -37,10 +37,12 @@ import fr.paris.lutece.plugins.avatarserver.business.Avatar;
 import fr.paris.lutece.plugins.avatarserver.business.AvatarHome;
 import fr.paris.lutece.plugins.avatarserver.service.AvatarService;
 import fr.paris.lutece.plugins.avatarserver.service.HashService;
+import fr.paris.lutece.plugins.avatarserver.service.HttpUtils;
 import fr.paris.lutece.portal.service.security.LuteceUser;
 import fr.paris.lutece.portal.service.security.SecurityService;
 import fr.paris.lutece.portal.service.security.UserNotSignedException;
 import fr.paris.lutece.portal.service.util.AppLogService;
+import fr.paris.lutece.portal.service.util.AppPropertiesService;
 import fr.paris.lutece.portal.web.upload.MultipartHttpServletRequest;
 import fr.paris.lutece.util.http.MultipartUtil;
 
@@ -63,6 +65,11 @@ public class PostAvatarServlet extends HttpServlet
 {
     private static final String PARAMETER_IMAGE = "image";
     private static final String PARAMETER_RETURN_URL = "return_url";
+    private static final String PROPERTY_AUTHORIZED_DOMAINS = "avatarserver.post_servlet.authorized_domains";
+    private static final String PROPERTY_ACCESS_CONTROL_METHODS = "avatarserver.post_servlet.access_control.methods";
+    private static final String PROPERTY_ACCESS_CONTROL_CREDENTIALS = "avatarserver.post_servlet.access_control.credentials";
+    private static final String ACCESS_CONTROL_METHODS = AppPropertiesService.getProperty( PROPERTY_ACCESS_CONTROL_METHODS );
+    private static final String ACCESS_CONTROL_CREDENTIALS = AppPropertiesService.getProperty( PROPERTY_ACCESS_CONTROL_CREDENTIALS );
     private static int _nRequestSizeMax = 200000;
     private static int _nSizeThreshold = -1;
 
@@ -100,6 +107,16 @@ public class PostAvatarServlet extends HttpServlet
                 Avatar avatar = AvatarHome.findByHash( strHash );
                 boolean bCreate = false;
 
+                String strAuthorizedDomains = AppPropertiesService.getProperty( PROPERTY_AUTHORIZED_DOMAINS );
+                String strOriginDomain = HttpUtils.getHeaderOrigin( request );
+                if( !HttpUtils.isValidDomain( strOriginDomain, strAuthorizedDomains ))
+                {
+                    out.println( "Request sent from an unauthorized domain : " + strOriginDomain );
+                    AppLogService.info( "AvatarServer : request sent from an unauthorized domain : " + strOriginDomain );
+                    response.sendError( HttpServletResponse.SC_UNAUTHORIZED );
+                }
+                HttpUtils.setAccessControlHeaders( response , ACCESS_CONTROL_METHODS , strOriginDomain , ACCESS_CONTROL_CREDENTIALS );
+                
                 if ( avatar == null )
                 {
                     avatar = new Avatar( );
@@ -127,20 +144,19 @@ public class PostAvatarServlet extends HttpServlet
             }
             else
             {
-                out.println( "No user connected!" );
+                out.println( "User not signed!" );
                 response.sendError( HttpServletResponse.SC_UNAUTHORIZED );
             }
         }
         catch( FileUploadException ex )
         {
             out.println( "Error uploading avatar : " + ex.getMessage( ) );
-            AppLogService.error( "Error uploading avatar : " + ex.getMessage( ), ex );
+            AppLogService.error( "AvatarServer : Error uploading avatar : " + ex.getMessage( ), ex );
             response.sendError( HttpServletResponse.SC_BAD_REQUEST );
         }
         catch( UserNotSignedException ex )
         {
-            out.println( "Error uploading avatar : " + ex.getMessage( ) );
-            AppLogService.error( "Error uploading avatar : " + ex.getMessage( ), ex );
+            out.println( "Error uploading avatar : User not signed" );
             response.sendError( HttpServletResponse.SC_UNAUTHORIZED );
         }
         finally
