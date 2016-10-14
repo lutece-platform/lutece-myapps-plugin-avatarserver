@@ -72,6 +72,7 @@ public class PostAvatarServlet extends HttpServlet
     private static final String ACCESS_CONTROL_CREDENTIALS = AppPropertiesService.getProperty( PROPERTY_ACCESS_CONTROL_CREDENTIALS );
     private static int _nRequestSizeMax = 200000;
     private static int _nSizeThreshold = -1;
+    private static final long serialVersionUID = 1L;
 
     /**
      * {@inheritDoc }
