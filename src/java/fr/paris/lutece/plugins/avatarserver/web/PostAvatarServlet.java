@@ -100,7 +100,10 @@ public class PostAvatarServlet extends HttpServlet
             FileItem imageSource = multiPartRequest.getFile( PARAMETER_IMAGE );
             String strReturnUrl = multiPartRequest.getParameter( PARAMETER_RETURN_URL );
 
-            LuteceUser user = SecurityService.getInstance( ).getRemoteUser( request );
+            LuteceUser user = null;
+            if ( SecurityService.isAuthenticationEnable() ) {
+                user = SecurityService.getInstance( ).getRemoteUser( request );
+            }
             if ( user != null )
             {
                 String strEmail = user.getEmail( );
