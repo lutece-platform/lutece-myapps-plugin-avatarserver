@@ -68,10 +68,12 @@ public class PostAvatarServlet extends HttpServlet
     private static final String PROPERTY_AUTHORIZED_DOMAINS = "avatarserver.post_servlet.authorized_domains";
     private static final String PROPERTY_ACCESS_CONTROL_METHODS = "avatarserver.post_servlet.access_control.methods";
     private static final String PROPERTY_ACCESS_CONTROL_CREDENTIALS = "avatarserver.post_servlet.access_control.credentials";
+    private static final String PROPERTY_SIZE_MAX = "avatarserver.post_servlet.size.max";
+    private static final String PROPERTY_SIZE_THRESHOLD = "avatarserver.post_servlet.size.threshold";
     private static final String ACCESS_CONTROL_METHODS = AppPropertiesService.getProperty( PROPERTY_ACCESS_CONTROL_METHODS );
     private static final String ACCESS_CONTROL_CREDENTIALS = AppPropertiesService.getProperty( PROPERTY_ACCESS_CONTROL_CREDENTIALS );
-    private static int _nRequestSizeMax = 200000;
-    private static int _nSizeThreshold = -1;
+    private static int _nRequestSizeMax = AppPropertiesService.getPropertyInt( PROPERTY_SIZE_MAX, -1 );
+    private static int _nSizeThreshold = AppPropertiesService.getPropertyInt( PROPERTY_SIZE_THRESHOLD, -1 );
     private static final long serialVersionUID = 1L;
 
     /**
