@@ -152,25 +152,25 @@ public class PostAvatarServlet extends HttpServlet
                 {
                     out.println( "Request sent from an unauthorized domain : " + strOriginDomain );
                     AppLogService.info( "AvatarServer : request sent from an unauthorized domain : " + strOriginDomain );
-                    response.sendError( HttpServletResponse.SC_UNAUTHORIZED );
+                    response.setStatus( HttpServletResponse.SC_UNAUTHORIZED );
                 }
             }
             else
             {
                 out.println( "User not signed!" );
-                response.sendError( HttpServletResponse.SC_UNAUTHORIZED );
+                response.setStatus( HttpServletResponse.SC_UNAUTHORIZED );
             }
         }
         catch( FileUploadException ex )
         {
             out.println( "Error uploading avatar : " + ex.getMessage( ) );
             AppLogService.error( "AvatarServer : Error uploading avatar : " + ex.getMessage( ), ex );
-            response.sendError( HttpServletResponse.SC_BAD_REQUEST );
+            response.setStatus( HttpServletResponse.SC_BAD_REQUEST );
         }
         catch( UserNotSignedException ex )
         {
             out.println( "Error uploading avatar : User not signed" );
-            response.sendError( HttpServletResponse.SC_UNAUTHORIZED );
+            response.setStatus( HttpServletResponse.SC_UNAUTHORIZED );
         }
         finally
         {
