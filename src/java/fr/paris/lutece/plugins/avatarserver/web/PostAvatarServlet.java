@@ -48,6 +48,7 @@ import fr.paris.lutece.util.http.MultipartUtil;
 
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.FileUploadException;
+import org.apache.commons.lang.StringUtils;
 
 import java.io.IOException;
 
@@ -115,7 +116,7 @@ public class PostAvatarServlet extends HttpServlet
 
                 String strAuthorizedDomains = AppPropertiesService.getProperty( PROPERTY_AUTHORIZED_DOMAINS );
                 String strOriginDomain = HttpUtils.getHeaderOrigin( request );
-                if( !HttpUtils.isValidDomain( strOriginDomain, strAuthorizedDomains ))
+                if( StringUtils.isNotEmpty( strOriginDomain ) && !HttpUtils.isValidDomain( strOriginDomain, strAuthorizedDomains ))
                 {
                     out.println( "Request sent from an unauthorized domain : " + strOriginDomain );
                     AppLogService.info( "AvatarServer : request sent from an unauthorized domain : " + strOriginDomain );
