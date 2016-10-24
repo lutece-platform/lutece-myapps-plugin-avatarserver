@@ -117,7 +117,10 @@ public class PostAvatarServlet extends HttpServlet
                 String strAuthorizedDomains = AppPropertiesService.getProperty( PROPERTY_AUTHORIZED_DOMAINS );
                 String strOriginDomain = HttpUtils.getHeaderOrigin( request );
 
-                HttpUtils.setAccessControlHeaders( response , ACCESS_CONTROL_METHODS , strOriginDomain , ACCESS_CONTROL_CREDENTIALS );
+                if( StringUtils.isNotEmpty( strOriginDomain ) ) {
+                    HttpUtils.setAccessControlHeaders( response , ACCESS_CONTROL_METHODS , strOriginDomain , ACCESS_CONTROL_CREDENTIALS );
+                }
+
                 if( StringUtils.isEmpty( strOriginDomain ) || HttpUtils.isValidDomain( strOriginDomain, strAuthorizedDomains ))
                 {
                     if ( avatar == null )
