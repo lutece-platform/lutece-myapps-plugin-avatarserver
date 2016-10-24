@@ -116,37 +116,40 @@ public class PostAvatarServlet extends HttpServlet
 
                 String strAuthorizedDomains = AppPropertiesService.getProperty( PROPERTY_AUTHORIZED_DOMAINS );
                 String strOriginDomain = HttpUtils.getHeaderOrigin( request );
-                if( StringUtils.isNotEmpty( strOriginDomain ) && !HttpUtils.isValidDomain( strOriginDomain, strAuthorizedDomains ))
+
+                HttpUtils.setAccessControlHeaders( response , ACCESS_CONTROL_METHODS , strOriginDomain , ACCESS_CONTROL_CREDENTIALS );
+                if( StringUtils.isEmpty( strOriginDomain ) || HttpUtils.isValidDomain( strOriginDomain, strAuthorizedDomains ))
+                {
+                    if ( avatar == null )
+                    {
+                        avatar = new Avatar( );
+                        bCreate = true;
+                    }
+                    avatar.setEmail( strEmail );
+                    avatar.setHash( strHash );
+                    avatar.setValue( imageSource.get( ) );
+                    avatar.setMimeType( imageSource.getContentType( ) );
+
+                    if ( bCreate )
+                    {
+                        AvatarService.create( avatar );
+                    }
+                    else
+                    {
+                        AvatarService.update( avatar );
+                    }
+
+                    out.println( "Avatar successfully posted!" );
+                    if( strReturnUrl != null )
+                    {
+                        response.sendRedirect( strReturnUrl );
+                    }
+                }
+                else
                 {
                     out.println( "Request sent from an unauthorized domain : " + strOriginDomain );
                     AppLogService.info( "AvatarServer : request sent from an unauthorized domain : " + strOriginDomain );
                     response.sendError( HttpServletResponse.SC_UNAUTHORIZED );
-                }
-                HttpUtils.setAccessControlHeaders( response , ACCESS_CONTROL_METHODS , strOriginDomain , ACCESS_CONTROL_CREDENTIALS );
-                
-                if ( avatar == null )
-                {
-                    avatar = new Avatar( );
-                    bCreate = true;
-                }
-                avatar.setEmail( strEmail );
-                avatar.setHash( strHash );
-                avatar.setValue( imageSource.get( ) );
-                avatar.setMimeType( imageSource.getContentType( ) );
-
-                if ( bCreate )
-                {
-                    AvatarService.create( avatar );
-                }
-                else
-                {
-                    AvatarService.update( avatar );
-                }
-
-                out.println( "Avatar successfully posted!" );
-                if( strReturnUrl != null )
-                {
-                    response.sendRedirect( strReturnUrl );
                 }
             }
             else
