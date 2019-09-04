@@ -1,24 +1,24 @@
 ![](https://dev.lutece.paris.fr/jenkins/buildStatus/icon?job=myapps-plugin-avatarserver-deploy)
-# Avatar Server Plugin
+# Plugin Avatar Server
 
 ![](https://dev.lutece.paris.fr/plugins/plugin-avatarserver/images/avatarserver.png)
 
 ## Introduction
 
-This plugin allows you to use avatars associated to emails in a same way as the Gravatar site.
+Ce plugin permet de servir des avatars associés à des adresses mail à la manière du site Gravatar.
 
 ## Configuration
 
-The configuration must include:
+La configuration doit indiquer :
 
  
-* the default image's url to return when there is no avatar in the database corresponding to the requested email.
-* size in which the images will be stored.
+* la valeur par défaut de l'url de l'image à renvoyer lorsqu'il n'y a pas d'avatardans la base correspondant à l'email demandé.
+* la taille dans laquelle seront stockées les images.
 
-The configuration may additionally include:
+La configuration peut indiquer :
 
  
-* quality between 0.0 (lowest) and 1.0 (highest) in which the images will be stored.
+* la qualité de 0.0 (la plus basse) à 1.0 (la plus haute) avec laquelle seront stockées les images.
 
 ```
 # avatarserver properties file
@@ -34,7 +34,7 @@ avatarserver.avatar.quality=0.9
 
 ## Usage
 
-The URL to access to the image is presented below where HASH is a MD5 hash of the user's email.
+L'accès à l'image de l'avatar se fait par l'url suivante où la valeur HASH est le condensat MD5 de l'email de l'utilisateurà afficher.
 
 ```
 http://avatar.mydomain.com/[context]/rest/avatarserver/HASH
