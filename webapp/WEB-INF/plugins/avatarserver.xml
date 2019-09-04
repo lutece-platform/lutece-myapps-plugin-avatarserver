@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?><plug-in>
     <name>avatarserver</name>
     <class>fr.paris.lutece.plugins.avatarserver.service.AvatarServerPlugin</class>
-    <version>1.2.4</version>
+    <version>1.2.5-SNAPSHOT</version>
     <documentation/>
     <installation/>
     <changes/>
