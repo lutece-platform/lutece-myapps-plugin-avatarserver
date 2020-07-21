@@ -79,7 +79,7 @@ public class HttpUtils
 
             for( String strAuthorizedDomain : aAuthorizedDomains )
             {
-                if( PATH_MATCHER.match( strAuthorizedDomain.trim() , strDomain.trim() ) )
+                if ( PATH_MATCHER.match( strAuthorizedDomain.trim() , strDomain.trim() ) )
                 {
                     bValid = true;
                     break;
