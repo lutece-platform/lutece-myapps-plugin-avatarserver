@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2016, Mairie de Paris
+ * Copyright (c) 2002-2020, City of Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -63,7 +63,7 @@ public class Avatar
      */
     public int getId( )
     {
-        return _nIdAvatar;
+        return this._nIdAvatar;
     }
 
     /**
@@ -74,7 +74,7 @@ public class Avatar
      */
     public void setId( int nIdAvatar )
     {
-        _nIdAvatar = nIdAvatar;
+        this._nIdAvatar = nIdAvatar;
     }
 
     /**
@@ -84,7 +84,7 @@ public class Avatar
      */
     public String getEmail( )
     {
-        return _strEmail;
+        return this._strEmail;
     }
 
     /**
@@ -95,7 +95,7 @@ public class Avatar
      */
     public void setEmail( String strEmail )
     {
-        _strEmail = strEmail;
+        this._strEmail = strEmail;
     }
 
     /**
@@ -105,7 +105,14 @@ public class Avatar
      */
     public byte [ ] getValue( )
     {
-        return _byValue;
+        if ( this._byValue != null )
+        {
+            return this._byValue.clone( );
+        }
+        else
+        {
+            return null;
+        }
     }
 
     /**
@@ -116,7 +123,15 @@ public class Avatar
      */
     public void setValue( byte [ ] value )
     {
-        _byValue = value;
+        if ( value != null )
+        {
+            this._byValue = value.clone( );
+        }
+        else
+        {
+            this._byValue = null;
+        }
+
     }
 
     /**
@@ -126,7 +141,7 @@ public class Avatar
      */
     public String getMimeType( )
     {
-        return _strMimeType;
+        return this._strMimeType;
     }
 
     /**
@@ -137,7 +152,7 @@ public class Avatar
      */
     public void setMimeType( String mimeType )
     {
-        _strMimeType = mimeType;
+        this._strMimeType = mimeType;
     }
 
     /**
@@ -147,7 +162,7 @@ public class Avatar
      */
     public String getHash( )
     {
-        return _strHash;
+        return this._strHash;
     }
 
     /**
@@ -158,6 +173,6 @@ public class Avatar
      */
     public void setHash( String hash )
     {
-        _strHash = hash;
+        this._strHash = hash;
     }
 }

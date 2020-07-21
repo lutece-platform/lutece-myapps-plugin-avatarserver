@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2016, Mairie de Paris
+ * Copyright (c) 2002-2020, City of Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -95,8 +95,8 @@ public class AvatarServerApp extends MVCApplication
      *             if an error occurs
      */
     @View( value = VIEW_HOME, defaultView = true )
-    public XPage getUpdateAvatar( HttpServletRequest request ) throws UserNotSignedException, IllegalAccessException, IllegalArgumentException,
-            InvocationTargetException
+    public XPage getUpdateAvatar( HttpServletRequest request )
+            throws UserNotSignedException, IllegalAccessException, IllegalArgumentException, InvocationTargetException
     {
         LuteceUser user = SecurityService.isAuthenticationEnable( ) ? SecurityService.getInstance( ).getRegisteredUser( request ) : null;
 
@@ -121,7 +121,7 @@ public class AvatarServerApp extends MVCApplication
         model.put( MARK_EMAIL, strEmail );
         model.put( MARK_BACK_URL, strBackUrl );
 
-        return getXPage( TEMPLATE_AVATAR, request.getLocale( ), model );
+        return getXPage( TEMPLATE_AVATAR, getLocale( request ), model );
     }
 
     /**
@@ -147,7 +147,7 @@ public class AvatarServerApp extends MVCApplication
 
             if ( imageSource.getSize( ) == 0 )
             {
-                addError( MESSAGE_MISSING_FILE, request.getLocale( ) );
+                addError( MESSAGE_MISSING_FILE, getLocale( request ) );
 
                 return redirectView( request, VIEW_HOME );
             }
