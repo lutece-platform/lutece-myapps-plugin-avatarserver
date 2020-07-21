@@ -54,7 +54,9 @@ public class HttpUtils
 
     /**
      * Get the origin header
-     * @param request The HTTP request
+     * 
+     * @param request
+     *            The HTTP request
      * @return the header value
      */
     public static String getHeaderOrigin( HttpServletRequest request )
@@ -64,29 +66,32 @@ public class HttpUtils
 
     /**
      * Check if a domain is valid according a list of patterns
-     * @param strDomain The domain
-     * @param strValidPatterns A list of valid domain patterns separated by a comma.
+     * 
+     * @param strDomain
+     *            The domain
+     * @param strValidPatterns
+     *            A list of valid domain patterns separated by a comma.
      * @return true if valid
      */
     public static boolean isValidDomain( String strDomain, String strValidPatterns )
     {
         boolean bValid = false;
-        
-        if( !StringUtils.isEmpty( strValidPatterns ) )
+
+        if ( !StringUtils.isEmpty( strValidPatterns ) )
         {
 
-            String[] aAuthorizedDomains = strValidPatterns.split( "," );
+            String [ ] aAuthorizedDomains = strValidPatterns.split( "," );
 
-            for( String strAuthorizedDomain : aAuthorizedDomains )
+            for ( String strAuthorizedDomain : aAuthorizedDomains )
             {
-                if ( PATH_MATCHER.match( strAuthorizedDomain.trim() , strDomain.trim() ) )
+                if ( PATH_MATCHER.match( strAuthorizedDomain.trim( ), strDomain.trim( ) ) )
                 {
                     bValid = true;
                     break;
                 }
             }
         }
-        if( !bValid )
+        if ( !bValid )
         {
             AppLogService.info( "AvatarServer : request rent from an invalid domain : " + strDomain );
         }
@@ -95,10 +100,15 @@ public class HttpUtils
 
     /**
      * Set access control headers of a given response object
-     * @param response The response
-     * @param strMethods The Methods header value
-     * @param strOrigin The Origin header value
-     * @param strCredentials The Credentials header value
+     * 
+     * @param response
+     *            The response
+     * @param strMethods
+     *            The Methods header value
+     * @param strOrigin
+     *            The Origin header value
+     * @param strCredentials
+     *            The Credentials header value
      */
     public static void setAccessControlHeaders( HttpServletResponse response, String strMethods, String strOrigin, String strCredentials )
     {

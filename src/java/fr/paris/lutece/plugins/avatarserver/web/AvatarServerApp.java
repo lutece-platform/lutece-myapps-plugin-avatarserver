@@ -95,8 +95,8 @@ public class AvatarServerApp extends MVCApplication
      *             if an error occurs
      */
     @View( value = VIEW_HOME, defaultView = true )
-    public XPage getUpdateAvatar( HttpServletRequest request ) throws UserNotSignedException, IllegalAccessException, IllegalArgumentException,
-            InvocationTargetException
+    public XPage getUpdateAvatar( HttpServletRequest request )
+            throws UserNotSignedException, IllegalAccessException, IllegalArgumentException, InvocationTargetException
     {
         LuteceUser user = SecurityService.isAuthenticationEnable( ) ? SecurityService.getInstance( ).getRegisteredUser( request ) : null;
 

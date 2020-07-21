@@ -95,7 +95,7 @@ public class Avatar
      */
     public void setEmail( String strEmail )
     {
-       this._strEmail = strEmail;
+        this._strEmail = strEmail;
     }
 
     /**
@@ -111,10 +111,9 @@ public class Avatar
         }
         else
         {
-        	return null;
+            return null;
         }
     }
-    
 
     /**
      * set the icon file value
@@ -130,9 +129,9 @@ public class Avatar
         }
         else
         {
-        	this._byValue = null;
+            this._byValue = null;
         }
-        
+
     }
 
     /**
