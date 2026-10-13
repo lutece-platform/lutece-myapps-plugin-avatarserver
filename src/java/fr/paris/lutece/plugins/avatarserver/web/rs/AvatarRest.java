@@ -36,70 +36,55 @@ package fr.paris.lutece.plugins.avatarserver.web.rs;
 import fr.paris.lutece.plugins.avatarserver.business.Avatar;
 import fr.paris.lutece.plugins.avatarserver.business.AvatarHome;
 import fr.paris.lutece.plugins.rest.service.RestConstants;
-import fr.paris.lutece.portal.service.util.AppPropertiesService;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
-import java.io.IOException;
-import java.io.OutputStream;
+import org.eclipse.microprofile.config.inject.ConfigProperty;
 
-import javax.servlet.http.HttpServletResponse;
-
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.HttpHeaders;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
+import jakarta.ws.rs.GET;
+import jakarta.ws.rs.Path;
+import jakarta.ws.rs.PathParam;
+import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.core.HttpHeaders;
+import jakarta.ws.rs.core.Response;
 
 /**
- *
- * @author martinlo
+ * Avatar REST service
  */
+@ApplicationScoped
 @Path( RestConstants.BASE_PATH + "avatarserver/" )
 public class AvatarRest
 {
-    private static final String PROPERTY_DEFAULT_AVATAR_URL = "avatarserver.default.avatar.url";
-    @Context
-    HttpHeaders _header;
-    @Context
-    HttpServletResponse _response;
-    private Logger _logger = Logger.getLogger( RestConstants.REST_LOGGER );
+    private static final Logger LOGGER = LogManager.getLogger( RestConstants.REST_LOGGER );
+
+    @Inject
+    @ConfigProperty( name = "avatarserver.default.avatar.url", defaultValue = "../../images/local/skin/plugins/avatarserver/avatar.jpg" )
+    private String _strDefaultAvatarUrl;
 
     /**
      * Return the avatar for a given hash
      * 
      * @param strHash
      *            The hash
-     * @return The avatar's image
-     * @throws IOException
-     *             if an error occurs
+     * @return The avatar's image, or a redirection to the default avatar
      */
     @GET
     @Path( "/{hash}" )
     @Produces( "image/*" )
-    public String getAvatar( @PathParam( "hash" ) String strHash ) throws IOException
+    public Response getAvatar( @PathParam( "hash" ) String strHash )
     {
-        _logger.debug( "Avatar requested for hash = " + strHash );
+        LOGGER.debug( "Avatar requested for hash = {}", strHash );
 
         Avatar avatar = AvatarHome.findByHash( strHash );
 
         if ( avatar != null )
         {
-            _response.setContentType( "images/jpg" );
-            _response.setHeader( "Content-Type", avatar.getMimeType( ) );
-            _response.setHeader( "Content-Disposition", "inline; filename=\"" + "avatar" + "\"" );
-
-            OutputStream out = _response.getOutputStream( );
-            out.write( avatar.getValue( ) );
-            out.close( );
-        }
-        else
-        {
-            String strDefaultAvatarUrl = AppPropertiesService.getProperty( PROPERTY_DEFAULT_AVATAR_URL );
-            _response.sendRedirect( strDefaultAvatarUrl );
+            return Response.ok( avatar.getValue( ), avatar.getMimeType( ) ).header( "Content-Disposition", "inline; filename=\"avatar\"" ).build( );
         }
 
-        return "";
+        return Response.status( Response.Status.FOUND ).header( HttpHeaders.LOCATION, _strDefaultAvatarUrl ).build( );
     }
 }

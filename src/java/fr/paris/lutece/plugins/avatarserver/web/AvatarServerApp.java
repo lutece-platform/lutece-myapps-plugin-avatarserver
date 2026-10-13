@@ -37,66 +37,69 @@ import fr.paris.lutece.plugins.avatarserver.business.Avatar;
 import fr.paris.lutece.plugins.avatarserver.business.AvatarHome;
 import fr.paris.lutece.plugins.avatarserver.service.AvatarService;
 import fr.paris.lutece.plugins.avatarserver.service.HashService;
+import fr.paris.lutece.plugins.avatarserver.service.ImageService;
 import fr.paris.lutece.portal.service.security.LuteceUser;
 import fr.paris.lutece.portal.service.security.SecurityService;
 import fr.paris.lutece.portal.service.security.UserNotSignedException;
-import fr.paris.lutece.portal.service.util.AppPropertiesService;
+import fr.paris.lutece.portal.service.upload.MultipartItem;
 import fr.paris.lutece.portal.util.mvc.commons.annotations.Action;
 import fr.paris.lutece.portal.util.mvc.commons.annotations.View;
 import fr.paris.lutece.portal.util.mvc.xpage.MVCApplication;
 import fr.paris.lutece.portal.util.mvc.xpage.annotations.Controller;
+import fr.paris.lutece.portal.web.cdi.mvc.Models;
 import fr.paris.lutece.portal.web.upload.MultipartHttpServletRequest;
 import fr.paris.lutece.portal.web.xpages.XPage;
 
-import org.apache.commons.fileupload.FileItem;
+import jakarta.enterprise.context.RequestScoped;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
+import jakarta.servlet.http.HttpServletRequest;
 
-import java.lang.reflect.InvocationTargetException;
-
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
+import org.eclipse.microprofile.config.inject.ConfigProperty;
 
 /**
  * AvatarServer App
  */
-@Controller( xpageName = "avatarserver", pageTitleI18nKey = "avatarserver.xpage.pageTitle", pagePathI18nKey = "avatarserver.xpage.pagePath" )
+@RequestScoped
+@Named( "avatarserver.xpage.avatarserver" )
+@Controller( xpageName = "avatarserver", pageTitleI18nKey = "avatarserver.xpage.pageTitle", pagePathI18nKey = "avatarserver.xpage.pagePath", securityTokenEnabled = true )
 public class AvatarServerApp extends MVCApplication
 {
+    private static final long serialVersionUID = 1L;
     private static final String TEMPLATE_AVATAR = "skin/plugins/avatarserver/update_avatar.html";
     private static final String MARK_AVATAR = "avatar";
     private static final String MARK_AVATAR_ID = "avatar_id";
     private static final String MARK_EMAIL = "email";
     private static final String MARK_BACK_URL = "url_back";
 
-    // Views and actions
     private static final String VIEW_HOME = "home";
     private static final String ACTION_UPDATE_AVATAR = "updateAvatar";
 
-    // Parameters
-    private static final String PARAMETER_ID_AVATAR = "id_avatar";
     private static final String PARAMETER_IMAGE = "avatar_image";
-    private static final String PROPERTY_URL_AFTER_UPDATE = "avatarserver.update_avatar.afterUpdateUrl";
-    private static final String PROPERTY_BACK_URL = "avatarserver.update_avatar.backUrl";
     private static final String MESSAGE_MISSING_FILE = "avatarserver.xpage.message.missingFile";
+    private static final String MESSAGE_INVALID_IMAGE = "avatarserver.message.invalidImage";
+
+    @Inject
+    @ConfigProperty( name = "avatarserver.update_avatar.afterUpdateUrl", defaultValue = "Portal.jsp?page=mydashboard" )
+    private String _strAfterUpdateUrl;
+
+    @Inject
+    @ConfigProperty( name = "avatarserver.update_avatar.backUrl", defaultValue = "jsp/site/Portal.jsp?page=mydashboard" )
+    private String _strBackUrl;
 
     /**
      * Update avatar view
      * 
      * @param request
      *            The HTTP request
+     * @param model
+     *            The model
      * @return The XPage
      * @throws UserNotSignedException
      *             if the user is not signed
-     * @throws IllegalAccessException
-     *             if an error occurs
-     * @throws IllegalArgumentException
-     *             if an error occurs
-     * @throws InvocationTargetException
-     *             if an error occurs
      */
-    @View( value = VIEW_HOME, defaultView = true )
-    public XPage getUpdateAvatar( HttpServletRequest request ) throws UserNotSignedException, IllegalAccessException, IllegalArgumentException,
-            InvocationTargetException
+    @View( value = VIEW_HOME, defaultView = true, securityTokenAction = ACTION_UPDATE_AVATAR )
+    public XPage getUpdateAvatar( HttpServletRequest request, Models model ) throws UserNotSignedException
     {
         LuteceUser user = SecurityService.isAuthenticationEnable( ) ? SecurityService.getInstance( ).getRegisteredUser( request ) : null;
 
@@ -108,18 +111,15 @@ public class AvatarServerApp extends MVCApplication
         String strEmail = user.getEmail( );
         String strHash = HashService.getHash( strEmail );
         Avatar avatar = AvatarHome.findByHash( strHash );
-        String strBackUrl = AppPropertiesService.getProperty( PROPERTY_BACK_URL );
-
-        Map<String, Object> model = getModel( );
 
         if ( avatar != null )
         {
             model.put( MARK_AVATAR_ID, avatar.getId( ) );
+            model.put( MARK_AVATAR, avatar );
         }
 
-        model.put( MARK_AVATAR, avatar );
         model.put( MARK_EMAIL, strEmail );
-        model.put( MARK_BACK_URL, strBackUrl );
+        model.put( MARK_BACK_URL, _strBackUrl );
 
         return getXPage( TEMPLATE_AVATAR, request.getLocale( ), model );
     }
@@ -136,47 +136,47 @@ public class AvatarServerApp extends MVCApplication
     @Action( ACTION_UPDATE_AVATAR )
     public XPage doUpdateAvatar( HttpServletRequest request ) throws UserNotSignedException
     {
-        LuteceUser user = SecurityService.getInstance( ).getRegisteredUser( request );
+        LuteceUser user = SecurityService.isAuthenticationEnable( ) ? SecurityService.getInstance( ).getRegisteredUser( request ) : null;
 
-        if ( user != null )
-        {
-            String strAvatarId = request.getParameter( PARAMETER_ID_AVATAR );
-
-            MultipartHttpServletRequest multiPartRequest = (MultipartHttpServletRequest) request;
-            FileItem imageSource = multiPartRequest.getFile( PARAMETER_IMAGE );
-
-            if ( imageSource.getSize( ) == 0 )
-            {
-                addError( MESSAGE_MISSING_FILE, request.getLocale( ) );
-
-                return redirectView( request, VIEW_HOME );
-            }
-
-            boolean bUpdate = ( strAvatarId != null );
-
-            if ( bUpdate )
-            {
-                Avatar avatar = AvatarHome.findByPrimaryKey( Integer.parseInt( strAvatarId ) );
-                avatar.setValue( imageSource.get( ) );
-                avatar.setMimeType( imageSource.getContentType( ) );
-                AvatarService.update( avatar );
-            }
-            else
-            {
-                Avatar avatar = new Avatar( );
-                avatar.setEmail( user.getEmail( ) );
-                avatar.setValue( imageSource.get( ) );
-                avatar.setMimeType( imageSource.getContentType( ) );
-                AvatarService.create( avatar );
-            }
-        }
-        else
+        if ( user == null )
         {
             throw new UserNotSignedException( );
         }
 
-        String strAfterUpdateUrl = AppPropertiesService.getProperty( PROPERTY_URL_AFTER_UPDATE );
+        MultipartItem imageSource = ( request instanceof MultipartHttpServletRequest ) ? ( (MultipartHttpServletRequest) request ).getFile( PARAMETER_IMAGE )
+                : null;
 
-        return redirect( request, strAfterUpdateUrl );
+        if ( imageSource == null || imageSource.getSize( ) == 0 )
+        {
+            addError( MESSAGE_MISSING_FILE, request.getLocale( ) );
+
+            return redirectView( request, VIEW_HOME );
+        }
+
+        if ( !ImageService.isImage( imageSource.get( ) ) )
+        {
+            addError( MESSAGE_INVALID_IMAGE, request.getLocale( ) );
+
+            return redirectView( request, VIEW_HOME );
+        }
+
+        Avatar avatar = AvatarHome.findByHash( HashService.getHash( user.getEmail( ) ) );
+
+        if ( avatar != null )
+        {
+            avatar.setValue( imageSource.get( ) );
+            avatar.setMimeType( imageSource.getContentType( ) );
+            AvatarService.update( avatar );
+        }
+        else
+        {
+            avatar = new Avatar( );
+            avatar.setEmail( user.getEmail( ) );
+            avatar.setValue( imageSource.get( ) );
+            avatar.setMimeType( imageSource.getContentType( ) );
+            AvatarService.create( avatar );
+        }
+
+        return redirect( request, _strAfterUpdateUrl );
     }
 }

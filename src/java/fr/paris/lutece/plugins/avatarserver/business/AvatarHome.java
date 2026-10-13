@@ -35,9 +35,10 @@ package fr.paris.lutece.plugins.avatarserver.business;
 
 import fr.paris.lutece.portal.service.plugin.Plugin;
 import fr.paris.lutece.portal.service.plugin.PluginService;
-import fr.paris.lutece.portal.service.spring.SpringContextService;
 
 import java.util.Collection;
+
+import jakarta.enterprise.inject.spi.CDI;
 
 /**
  * This class provides instances management methods (create, find, ...) for Avatar objects
@@ -45,7 +46,7 @@ import java.util.Collection;
 public final class AvatarHome
 {
     // Static variable pointed at the DAO instance
-    private static IAvatarDAO _dao = SpringContextService.getBean( "avatarserver.avatarDAO" );
+    private static IAvatarDAO _dao = CDI.current( ).select( IAvatarDAO.class ).get( );
     private static Plugin _plugin = PluginService.getPlugin( "avatarserver" );
 
     /**

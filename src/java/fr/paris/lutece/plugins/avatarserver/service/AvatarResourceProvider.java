@@ -41,39 +41,29 @@ import fr.paris.lutece.portal.service.image.ImageResourceProvider;
 import fr.paris.lutece.portal.web.constants.Parameters;
 import fr.paris.lutece.util.url.UrlItem;
 
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.context.Initialized;
+import jakarta.enterprise.event.Observes;
+import jakarta.servlet.ServletContext;
+
 /**
  * Service for Url entry types. Provide ImageResource managemenent
  *
  */
+@ApplicationScoped
 public class AvatarResourceProvider implements ImageResourceProvider
 {
-    private static final String PLUGIN_NAME = "avatarserver";
-    private static AvatarResourceProvider _singleton = new AvatarResourceProvider( );
     private static final String IMAGE_RESOURCE_TYPE_ID = "avatar_img";
 
     /**
-     * Creates a new instance of AvatarResourceProvider
+     * Registers the provider when the application starts
+     *
+     * @param context
+     *            the servlet context
      */
-    AvatarResourceProvider( )
-    {
-    }
-
-    /**
-     * Initializes the service
-     */
-    public void register( )
+    public void initializedService( @Observes @Initialized( ApplicationScoped.class ) ServletContext context )
     {
         ImageResourceManager.registerProvider( this );
-    }
-
-    /**
-     * Get the unique instance of the service
-     *
-     * @return The unique instance
-     */
-    public static AvatarResourceProvider getInstance( )
-    {
-        return _singleton;
     }
 
     /**
@@ -120,9 +110,8 @@ public class AvatarResourceProvider implements ImageResourceProvider
      */
     public static String getResourceImageEntryUrl( int nEntryUrl )
     {
-        String strResourceType = AvatarResourceProvider.getInstance( ).getResourceTypeId( );
         UrlItem url = new UrlItem( Parameters.IMAGE_SERVLET );
-        url.addParameter( Parameters.RESOURCE_TYPE, strResourceType );
+        url.addParameter( Parameters.RESOURCE_TYPE, IMAGE_RESOURCE_TYPE_ID );
         url.addParameter( Parameters.RESOURCE_ID, Integer.toString( nEntryUrl ) );
 
         return url.getUrlWithEntity( );

@@ -33,7 +33,13 @@
  */
 package fr.paris.lutece.plugins.avatarserver.business;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import java.util.Arrays;
+
+import org.junit.jupiter.api.Test;
 
 import fr.paris.lutece.test.LuteceTestCase;
 
@@ -49,6 +55,10 @@ public class AvatarBusinessTest extends LuteceTestCase
     private final static String AVATARIMAGE1 = "AvatarImage1";
     private final static String AVATARIMAGE2 = "AvatarImage2";
 
+    /**
+     * Tests the create, read, update and delete of an avatar
+     */
+    @Test
     public void testBusiness( )
     {
         // Initialize an object

@@ -1,57 +1,31 @@
-<#include "manageavatarserver_tabs.html" />
-<@tabs tab="avatar" />
-
-<div class="row-fluid" >
-    <div class="span12">
-
-        <@messages infos=infos />
-
-        <form method="post"  action="jsp/admin/plugins/avatarserver/ManageAvatars.jsp">
-            <button name="view_createAvatar" class="btn btn-primary pull-right" type="submit">
-                <i class="icon-plus icon-white"></i>
-                #i18n{avatarserver.manage_avatars.buttonAdd}
-            </button>
-        </form>
-
-        <h4>#i18n{avatarserver.manage_avatars.tableLabel}</h4>    
-
-        <@paginationAdmin paginator=paginator combo=1 />
-
-        <table class="table table-condensed table-striped">
-            <tr>
-            <input type="hidden" id="id_avatar" name="id_avatar"  />
-            <th>#i18n{avatarserver.manage_avatars.columnEmail}</th>
-            <th>#i18n{avatarserver.manage_avatars.columnAvatarImage}</th>
-            <th>#i18n{portal.util.labelActions}</th>
-            </tr>
-            <#list avatar_list as avatar >
-            <tr>
-            <input type="hidden" id="id_avatar" name="id_avatar"  />
-            <td>
-                ${avatar.email}
-            </td>
-            <td>
-                <img src="image?resource_type=avatar_img&id=${avatar.id}" width="50" height="50" />
-               
-            </td>
-            <td>
-                <a href="jsp/admin/plugins/avatarserver/ManageAvatars.jsp?view=modifyAvatar&id_avatar=${avatar.id}"
-                   class="btn btn-primary btn-small" title="#i18n{portal.util.labelModify}">
-                    <i class="icon-edit icon-white"></i>
-                </a>
-
-                <a href="jsp/admin/plugins/avatarserver/ManageAvatars.jsp?action=confirmRemoveAvatar&id_avatar=${avatar.id}"
-                   class="btn btn-danger btn-small" title="#i18n{portal.util.labelDelete}" >
-                    <i class="icon-trash icon-white"></i>
-                </a>
-            </td>
-            </tr>
-            </#list>
-        </table>
-
-        <@paginationAdmin paginator=paginator />
-
-    </div>
-</div>
-
-
+<@pageContainer>
+	<@pageColumn>
+		<@pageHeader title='#i18n{avatarserver.manage_avatars.title}'>
+			<@aButton href='jsp/admin/plugins/avatarserver/ManageAvatars.jsp?view=createAvatar' buttonIcon='plus' color='primary' title='#i18n{avatarserver.manage_avatars.buttonAdd}' hideTitle=['xs'] />
+		</@pageHeader>
+		<@messages infos=infos![] errors=errors![] />
+		<#if avatar_list?has_content>
+			<@manageFeature>
+				<#list avatar_list as avatar>
+				<@manageFeatureItem>
+					<@manageFeatureItemColumn auto=true>
+						<@img url='image?resource_type=avatar_img&amp;id=${avatar.id}' alt='#i18n{avatarserver.manage_avatars.columnAvatarImage}' class='avatar avatar-md rounded' />
+					</@manageFeatureItemColumn>
+					<@manageFeatureItemColumn flex=false>
+						<strong>${avatar.email!}</strong>
+					</@manageFeatureItemColumn>
+					<@manageFeatureItemColumn auto=true align='end'>
+						<@aButton href='jsp/admin/plugins/avatarserver/ManageAvatars.jsp?view=modifyAvatar&amp;id_avatar=${avatar.id}' title='#i18n{portal.util.labelModify}' buttonIcon='edit' color='primary' class='me-1' hideTitle=['all'] />
+						<@aButton href='jsp/admin/plugins/avatarserver/ManageAvatars.jsp?view=confirmRemoveAvatar&amp;id_avatar=${avatar.id}' title='#i18n{portal.util.labelDelete}' buttonIcon='trash' color='danger' hideTitle=['all'] />
+					</@manageFeatureItemColumn>
+				</@manageFeatureItem>
+				</#list>
+			</@manageFeature>
+			<@paginationAdmin paginator=paginator combo=1 />
+		<#else>
+			<@card>
+				<@empty title='#i18n{avatarserver.manage_avatars.noResult}' iconName='user-off' actionTitle='#i18n{avatarserver.manage_avatars.buttonAdd}' actionUrl='jsp/admin/plugins/avatarserver/ManageAvatars.jsp?view=createAvatar' />
+			</@card>
+		</#if>
+	</@pageColumn>
+</@pageContainer>
