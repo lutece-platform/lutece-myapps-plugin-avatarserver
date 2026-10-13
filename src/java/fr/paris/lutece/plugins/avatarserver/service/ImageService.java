@@ -64,6 +64,30 @@ public final class ImageService
     }
 
     /**
+     * Tells whether the bytes hold an image the service can read
+     * 
+     * @param byteArray
+     *            the bytes
+     * @return true if the bytes are a readable image
+     */
+    public static boolean isImage( byte [ ] byteArray )
+    {
+        if ( byteArray == null || byteArray.length == 0 )
+        {
+            return false;
+        }
+
+        try
+        {
+            return ImageIO.read( new ByteArrayInputStream( byteArray ) ) != null;
+        }
+        catch( IOException ex )
+        {
+            return false;
+        }
+    }
+
+    /**
      * Resize an image with the default quality
      * 
      * @param byteArray
@@ -97,6 +121,13 @@ public final class ImageService
             ByteArrayOutputStream out = new ByteArrayOutputStream( );
             BufferedImage image = ImageIO.read( in );
 
+            if ( image == null )
+            {
+                AppLogService.error( "Avatar - Image Service - The file is not a readable image" );
+
+                return byteArray;
+            }
+
             // Replace transparent background with white and drop alpha channel
             // Otherwise, the rest of the code would swap channels and this would lead to a red tint on images
             if ( image.getColorModel( ).hasAlpha( ) )
@@ -124,7 +155,7 @@ public final class ImageService
         }
         catch( IOException ex )
         {
-            AppLogService.error( "Avatar - Image Service - Error resizing image : " + ex.getMessage( ), ex );
+            AppLogService.error( "Avatar - Image Service - Error resizing image : {}", ex.getMessage( ), ex );
         }
 
         return byteArray;

@@ -77,7 +77,7 @@ public final class HashService
         }
         catch( NoSuchAlgorithmException ex )
         {
-            AppLogService.error( "Error getting gravatar : " + ex.getMessage( ), ex );
+            AppLogService.error( "Error getting gravatar : {}", ex.getMessage( ), ex );
         }
 
         return "";

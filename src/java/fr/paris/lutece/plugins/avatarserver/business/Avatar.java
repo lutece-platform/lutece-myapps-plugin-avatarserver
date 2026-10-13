@@ -33,25 +33,26 @@
  */
 package fr.paris.lutece.plugins.avatarserver.business;
 
-import org.hibernate.validator.constraints.Email;
-import org.hibernate.validator.constraints.NotEmpty;
+import java.io.Serializable;
 
-import javax.validation.constraints.Size;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.Size;
 
 /**
  * This is the business class for the object Avatar
  */
-public class Avatar
+public class Avatar implements Serializable
 {
+    private static final long serialVersionUID = 1L;
+
     // Variables declarations
     private byte [ ] _byValue;
     private String _strMimeType;
     private String _strHash;
     private int _nIdAvatar;
 
-    // @NotEmpty( message = "#i18n{avatarserver.validation.avatar.Email.notEmpty}" )
     @NotEmpty( message = "#i18n{portal.validation.message.notEmpty}" )
-    // @Size( max = 255 , message = "#i18n{avatarserver.validation.avatar.Email.size}" )
     @Size( max = 255, message = "#i18n{portal.validation.message.sizeMax}" )
     @Email( message = "#i18n{portal.validation.message.email}" )
     private String _strEmail;

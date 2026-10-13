@@ -1,9 +1,9 @@
-<jsp:useBean id="manageavatarserverAvatar" scope="session" class="fr.paris.lutece.plugins.avatarserver.web.AvatarJspBean" />
-<% String strContent = manageavatarserverAvatar.processController ( request , response ); %>
-
 <%@ page errorPage="../../ErrorPage.jsp" %>
+
+${ pageContext.setAttribute( 'strContent', avatarserverAvatarJspBean.processController( pageContext.request , pageContext.response ) ) }
+
 <jsp:include page="../../AdminHeader.jsp" />
 
-<%= strContent %>
+${ pageContext.getAttribute( 'strContent' ) }
 
 <%@ include file="../../AdminFooter.jsp" %>

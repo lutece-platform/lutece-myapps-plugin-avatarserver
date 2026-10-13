@@ -38,44 +38,54 @@ import fr.paris.lutece.plugins.avatarserver.business.AvatarHome;
 import fr.paris.lutece.plugins.avatarserver.service.AvatarService;
 import fr.paris.lutece.plugins.avatarserver.service.HashService;
 import fr.paris.lutece.plugins.avatarserver.service.HttpUtils;
+import fr.paris.lutece.plugins.avatarserver.service.ImageService;
 import fr.paris.lutece.portal.service.security.LuteceUser;
 import fr.paris.lutece.portal.service.security.SecurityService;
 import fr.paris.lutece.portal.service.security.UserNotSignedException;
+import fr.paris.lutece.portal.service.upload.MultipartHandler;
+import fr.paris.lutece.portal.service.upload.MultipartItem;
+import fr.paris.lutece.portal.service.plugin.PluginService;
+import fr.paris.lutece.portal.service.upload.MultipartUploadHandler;
 import fr.paris.lutece.portal.service.util.AppLogService;
 import fr.paris.lutece.portal.service.util.AppPropertiesService;
 import fr.paris.lutece.portal.web.upload.MultipartHttpServletRequest;
-import fr.paris.lutece.util.http.MultipartUtil;
 
-import org.apache.commons.fileupload.FileItem;
-import org.apache.commons.fileupload.FileUploadException;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import java.io.IOException;
 
-import javax.servlet.ServletException;
-import javax.servlet.ServletOutputStream;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.inject.Inject;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.ServletOutputStream;
+import jakarta.servlet.annotation.MultipartConfig;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 /**
  * PostAvatar Servlet.
  * This servlet let upload an avatar for the current connected user
  */
+@WebServlet( name = "avatarserverPost", urlPatterns = { "/servlet/plugins/avatarserver/post" } )
+@MultipartConfig
 public class PostAvatarServlet extends HttpServlet
 {
+    private static final String PLUGIN_NAME = "avatarserver";
     private static final String PARAMETER_IMAGE = "image";
     private static final String PARAMETER_RETURN_URL = "return_url";
     private static final String PROPERTY_AUTHORIZED_DOMAINS = "avatarserver.post_servlet.authorized_domains";
     private static final String PROPERTY_ACCESS_CONTROL_METHODS = "avatarserver.post_servlet.access_control.methods";
     private static final String PROPERTY_ACCESS_CONTROL_CREDENTIALS = "avatarserver.post_servlet.access_control.credentials";
     private static final String PROPERTY_SIZE_MAX = "avatarserver.post_servlet.size.max";
-    private static final String PROPERTY_SIZE_THRESHOLD = "avatarserver.post_servlet.size.threshold";
     private static final String ACCESS_CONTROL_METHODS = AppPropertiesService.getProperty( PROPERTY_ACCESS_CONTROL_METHODS );
     private static final String ACCESS_CONTROL_CREDENTIALS = AppPropertiesService.getProperty( PROPERTY_ACCESS_CONTROL_CREDENTIALS );
-    private static int _nRequestSizeMax = AppPropertiesService.getPropertyInt( PROPERTY_SIZE_MAX, -1 );
-    private static int _nSizeThreshold = AppPropertiesService.getPropertyInt( PROPERTY_SIZE_THRESHOLD, -1 );
     private static final long serialVersionUID = 1L;
+    private final long _lRequestSizeMax = AppPropertiesService.getPropertyInt( PROPERTY_SIZE_MAX, -1 );
+
+    @Inject
+    @MultipartUploadHandler
+    private transient MultipartHandler _multipartHandler;
 
     /**
      * {@inheritDoc }
@@ -83,6 +93,11 @@ public class PostAvatarServlet extends HttpServlet
     @Override
     protected void doGet( HttpServletRequest req, HttpServletResponse resp ) throws ServletException, IOException
     {
+        if ( !PluginService.isPluginEnable( PLUGIN_NAME ) )
+        {
+            return;
+        }
+
         ServletOutputStream out = resp.getOutputStream( );
         out.println( "Only POST is allowed" );
         out.flush( );
@@ -95,16 +110,35 @@ public class PostAvatarServlet extends HttpServlet
     @Override
     protected void doPost( HttpServletRequest request, HttpServletResponse response ) throws ServletException, IOException
     {
+        if ( !PluginService.isPluginEnable( PLUGIN_NAME ) )
+        {
+            return;
+        }
+
         ServletOutputStream out = response.getOutputStream( );
 
         try
         {
-            MultipartHttpServletRequest multiPartRequest = MultipartUtil.convert( _nSizeThreshold, _nRequestSizeMax, true, request );
-            FileItem imageSource = multiPartRequest.getFile( PARAMETER_IMAGE );
+            if ( _lRequestSizeMax >= 0 && request.getContentLengthLong( ) > _lRequestSizeMax )
+            {
+                throw new IllegalStateException( "the request size exceeds the configured maximum (" + _lRequestSizeMax + ")" );
+            }
+
+            MultipartHttpServletRequest multiPartRequest = _multipartHandler.handle( request, true );
+            MultipartItem imageSource = multiPartRequest.getFile( PARAMETER_IMAGE );
             String strReturnUrl = multiPartRequest.getParameter( PARAMETER_RETURN_URL );
 
+            if ( imageSource == null || !ImageService.isImage( imageSource.get( ) ) )
+            {
+                out.println( "Error uploading avatar : the 'image' part is missing or is not an image" );
+                response.setStatus( HttpServletResponse.SC_BAD_REQUEST );
+
+                return;
+            }
+
             LuteceUser user = null;
-            if ( SecurityService.isAuthenticationEnable() ) {
+            if ( SecurityService.isAuthenticationEnable( ) )
+            {
                 user = SecurityService.getInstance( ).getRemoteUser( request );
             }
             if ( user != null )
@@ -117,11 +151,12 @@ public class PostAvatarServlet extends HttpServlet
                 String strAuthorizedDomains = AppPropertiesService.getProperty( PROPERTY_AUTHORIZED_DOMAINS );
                 String strOriginDomain = HttpUtils.getHeaderOrigin( request );
 
-                if( StringUtils.isNotEmpty( strOriginDomain ) ) {
-                    HttpUtils.setAccessControlHeaders( response , ACCESS_CONTROL_METHODS , strOriginDomain , ACCESS_CONTROL_CREDENTIALS );
+                if ( StringUtils.isNotEmpty( strOriginDomain ) )
+                {
+                    HttpUtils.setAccessControlHeaders( response, ACCESS_CONTROL_METHODS, strOriginDomain, ACCESS_CONTROL_CREDENTIALS );
                 }
 
-                if( StringUtils.isEmpty( strOriginDomain ) || HttpUtils.isValidDomain( strOriginDomain, strAuthorizedDomains ))
+                if ( StringUtils.isEmpty( strOriginDomain ) || HttpUtils.isValidDomain( strOriginDomain, strAuthorizedDomains ) )
                 {
                     if ( avatar == null )
                     {
@@ -143,7 +178,7 @@ public class PostAvatarServlet extends HttpServlet
                     }
 
                     out.println( "Avatar successfully posted!" );
-                    if( strReturnUrl != null )
+                    if ( strReturnUrl != null )
                     {
                         response.sendRedirect( strReturnUrl );
                     }
@@ -151,7 +186,7 @@ public class PostAvatarServlet extends HttpServlet
                 else
                 {
                     out.println( "Request sent from an unauthorized domain : " + strOriginDomain );
-                    AppLogService.info( "AvatarServer : request sent from an unauthorized domain : " + strOriginDomain );
+                    AppLogService.info( "AvatarServer : request sent from an unauthorized domain : {}", strOriginDomain );
                     response.setStatus( HttpServletResponse.SC_UNAUTHORIZED );
                 }
             }
@@ -161,10 +196,10 @@ public class PostAvatarServlet extends HttpServlet
                 response.setStatus( HttpServletResponse.SC_UNAUTHORIZED );
             }
         }
-        catch( FileUploadException ex )
+        catch( IllegalStateException | ServletException ex )
         {
             out.println( "Error uploading avatar : " + ex.getMessage( ) );
-            AppLogService.error( "AvatarServer : Error uploading avatar : " + ex.getMessage( ), ex );
+            AppLogService.error( "AvatarServer : Error uploading avatar : {}", ex.getMessage( ), ex );
             response.setStatus( HttpServletResponse.SC_BAD_REQUEST );
         }
         catch( UserNotSignedException ex )

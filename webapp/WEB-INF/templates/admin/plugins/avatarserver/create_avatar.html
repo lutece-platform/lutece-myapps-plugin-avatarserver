@@ -1,40 +1,21 @@
-<#include "manageavatarserver_tabs.html" />
-<@tabs tab="avatar" />
-
-<div class="row" >
-    <div class="span12">
-
-    <form class="form-horizontal" method="post" action="jsp/admin/plugins/avatarserver/ManageAvatars.jsp" enctype="multipart/form-data" >
-        <fieldset>
-            <legend>#i18n{avatarserver.create_avatar.tableLabel}</legend>
-
-            <@messages errors=errors />
-
-            <input type="hidden" id="id_avatar" name="id_avatar"  />
-            <div class="control-group">
-                <label class="control-label" for="email" >#i18n{avatarserver.create_avatar.labelEmail} * :</label>
-                <div class="controls">
-                    <input type="text" id="email" name="email" value="${avatar.Email!''}"  maxlength="255" tabindex="1" />
-                    <span class="help-block">#i18n{avatarserver.create_avatar.labelEmail.help}</span>
-                </div>
-            </div>
-            <div class="control-group">
-                <label class="control-label" for="avatar_image" >#i18n{avatarserver.create_avatar.labelAvatarImage} * :</label>
-                <div class="controls">
-                    <input type="file" id="avatar_image" name="avatar_image" value="${avatar.AvatarImage!''}"  maxlength="50" tabindex="2" />
-                    <span class="help-block">#i18n{avatarserver.create_avatar.labelAvatarImage.help}</span>
-                </div>
-            </div>
-            <div class="form-actions">
-                <button name="action_createAvatar" class="btn btn-primary" type="submit" tabindex="3">
-                    #i18n{portal.util.labelCreate}
-                </button>
-                <button name="view_manageAvatars" class="btn" type="submit" >
-                    #i18n{portal.util.labelCancel}
-                </button>
-            </div>
-        </fieldset>
-    </form>
-    </div>
-</div>
-
+<@pageContainer>
+	<@pageColumn>
+		<@pageHeader title='#i18n{avatarserver.create_avatar.title}'>
+			<@aButton href='jsp/admin/plugins/avatarserver/ManageAvatars.jsp' title='#i18n{portal.util.labelBack}' buttonIcon='arrow-left' color='light' hideTitle=['xs'] />
+		</@pageHeader>
+		<@messages errors=errors![] />
+		<@tform name='create_avatar' action='jsp/admin/plugins/avatarserver/ManageAvatars.jsp' enctype='multipart/form-data' boxed=true>
+			<@input type='hidden' name='action' value='createAvatar' />
+			<@formGroup labelFor='email' labelKey='#i18n{avatarserver.create_avatar.labelEmail}' helpKey='#i18n{avatarserver.create_avatar.labelEmail.help}' mandatory=true>
+				<@input type='text' name='email' id='email' value='${avatar.email!}' maxlength=255 mandatory=true />
+			</@formGroup>
+			<@formGroup labelFor='avatar_image' labelKey='#i18n{avatarserver.create_avatar.labelAvatarImage}' helpKey='#i18n{avatarserver.create_avatar.labelAvatarImage.help}' mandatory=true>
+				<@input type='file' name='avatar_image' id='avatar_image' accept='image/*' mandatory=true />
+			</@formGroup>
+			<@formGroup>
+				<@button type='submit' buttonIcon='check' title='#i18n{portal.util.labelCreate}' color='primary' />
+				<@aButton href='jsp/admin/plugins/avatarserver/ManageAvatars.jsp' title='#i18n{portal.util.labelCancel}' buttonIcon='x' color='light' />
+			</@formGroup>
+		</@tform>
+	</@pageColumn>
+</@pageContainer>

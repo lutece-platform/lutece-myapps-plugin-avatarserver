@@ -34,23 +34,35 @@
 package fr.paris.lutece.plugins.avatarserver.service;
 
 import fr.paris.lutece.portal.service.util.AppLogService;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import org.apache.commons.lang.StringUtils;
-import org.springframework.util.AntPathMatcher;
-import org.springframework.util.PathMatcher;
+
+import java.util.Arrays;
+import java.util.regex.Pattern;
+
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+
+import org.apache.commons.lang3.StringUtils;
 
 /**
- * HttpUtils
+ * HTTP Utils
  */
-public class HttpUtils
+public final class HttpUtils
 {
     private static final String HEADER_ACCESS_CONTROL_METHODS = "Access-Control-Allow-Methods";
     private static final String HEADER_ACCESS_CONTROL_ORIGIN = "Access-Control-Allow-Origin";
     private static final String HEADER_ACCESS_CONTROL_CREDENTIALS = "Access-Control-Allow-Credentials";
-    private static final PathMatcher PATH_MATCHER = new AntPathMatcher( );
+    private static final String PATH_SEPARATOR = "/";
+    private static final String ANY_SEGMENTS = "**";
+    private static final String ANY_SEGMENT = "*";
 
     public static final String HEADER_ORIGIN = "origin";
+
+    /**
+     * Private constructor
+     */
+    private HttpUtils( )
+    {
+    }
 
     /**
      * Get the origin header
@@ -71,24 +83,23 @@ public class HttpUtils
     public static boolean isValidDomain( String strDomain, String strValidPatterns )
     {
         boolean bValid = false;
-        
-        if( !StringUtils.isEmpty( strValidPatterns ) )
+
+        if ( !StringUtils.isEmpty( strValidPatterns ) )
         {
+            String [ ] aAuthorizedDomains = strValidPatterns.split( "," );
 
-            String[] aAuthorizedDomains = strValidPatterns.split( "," );
-
-            for( String strAuthorizedDomain : aAuthorizedDomains )
+            for ( String strAuthorizedDomain : aAuthorizedDomains )
             {
-                if( PATH_MATCHER.match( strAuthorizedDomain.trim() , strDomain.trim() ) )
+                if ( matchPath( strAuthorizedDomain.trim( ), strDomain.trim( ) ) )
                 {
                     bValid = true;
                     break;
                 }
             }
         }
-        if( !bValid )
+        if ( !bValid )
         {
-            AppLogService.info( "AvatarServer : request rent from an invalid domain : " + strDomain );
+            AppLogService.info( "AvatarServer : request rent from an invalid domain : {}", strDomain );
         }
         return bValid;
     }
@@ -107,4 +118,108 @@ public class HttpUtils
         response.addHeader( HEADER_ACCESS_CONTROL_CREDENTIALS, strCredentials );
     }
 
+    /**
+     * Matches a path against an Ant-style pattern: segments are separated by '/', '**' as a whole segment matches any number of segments, '*' matches
+     * any characters within a segment and '?' one character
+     * @param strPattern The pattern
+     * @param strPath The path
+     * @return true if the path matches the pattern
+     */
+    static boolean matchPath( String strPattern, String strPath )
+    {
+        if ( strPath.startsWith( PATH_SEPARATOR ) != strPattern.startsWith( PATH_SEPARATOR ) )
+        {
+            return false;
+        }
+
+        return matchSegments( tokenize( strPattern ), 0, tokenize( strPath ), 0, strPattern.endsWith( PATH_SEPARATOR ), strPath.endsWith( PATH_SEPARATOR ) );
+    }
+
+    /**
+     * Splits a path into its non empty segments
+     * @param strPath The path
+     * @return The segments
+     */
+    private static String [ ] tokenize( String strPath )
+    {
+        return Arrays.stream( strPath.split( PATH_SEPARATOR ) ).filter( s -> !s.isEmpty( ) ).toArray( String [ ]::new );
+    }
+
+    /**
+     * Matches the pattern segments from a position against the path segments from a position
+     * @param patternSegments The pattern segments
+     * @param nPattern The position in the pattern segments
+     * @param pathSegments The path segments
+     * @param nPath The position in the path segments
+     * @param bPatternTrailing true if the pattern ends with a separator
+     * @param bPathTrailing true if the path ends with a separator
+     * @return true if the remaining segments match
+     */
+    private static boolean matchSegments( String [ ] patternSegments, int nPattern, String [ ] pathSegments, int nPath, boolean bPatternTrailing,
+            boolean bPathTrailing )
+    {
+        if ( nPattern == patternSegments.length )
+        {
+            return nPath == pathSegments.length
+                    && ( bPatternTrailing == bPathTrailing || ( nPattern > 0 && ANY_SEGMENTS.equals( patternSegments [nPattern - 1] ) ) );
+        }
+
+        if ( nPath == pathSegments.length && nPattern == patternSegments.length - 1 && ANY_SEGMENT.equals( patternSegments [nPattern] ) && bPathTrailing
+                && Arrays.stream( patternSegments, 0, nPattern ).noneMatch( ANY_SEGMENTS::equals ) )
+        {
+            return true;
+        }
+
+        if ( ANY_SEGMENTS.equals( patternSegments [nPattern] ) )
+        {
+            for ( int i = nPath; i <= pathSegments.length; i++ )
+            {
+                if ( matchSegments( patternSegments, nPattern + 1, pathSegments, i, bPatternTrailing, bPathTrailing ) )
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        return nPath < pathSegments.length && matchSegment( patternSegments [nPattern], pathSegments [nPath] )
+                && matchSegments( patternSegments, nPattern + 1, pathSegments, nPath + 1, bPatternTrailing, bPathTrailing );
+    }
+
+    /**
+     * Matches one segment against a pattern segment with '*' and '?' wildcards
+     * @param strPattern The pattern segment
+     * @param strSegment The path segment
+     * @return true if the segment matches
+     */
+    private static boolean matchSegment( String strPattern, String strSegment )
+    {
+        StringBuilder sbRegex = new StringBuilder( );
+        StringBuilder sbLiteral = new StringBuilder( );
+
+        for ( char c : strPattern.toCharArray( ) )
+        {
+            if ( c == '*' || c == '?' )
+            {
+                if ( sbLiteral.length( ) > 0 )
+                {
+                    sbRegex.append( Pattern.quote( sbLiteral.toString( ) ) );
+                    sbLiteral.setLength( 0 );
+                }
+                sbRegex.append( c == '*' ? ".*" : "." );
+            }
+            else
+            {
+                sbLiteral.append( c );
+            }
+        }
+
+        if ( sbLiteral.length( ) > 0 )
+        {
+            sbRegex.append( Pattern.quote( sbLiteral.toString( ) ) );
+        }
+
+        return Pattern.compile( sbRegex.toString( ), Pattern.DOTALL ).matcher( strSegment ).matches( );
+    }
 }
